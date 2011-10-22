@@ -1,0 +1,123 @@
+﻿// ----------------------------------------------------------------------
+// <copyright file="DependencyLoader.cs" company="Route Manager de México">
+//     Copyright Route Manager de México(c) 2011. All rights reserved.
+// </copyright>
+// ------------------------------------------------------------------------
+namespace DependencyLocation.Setup
+{
+    using System;
+    using System.Collections.Generic;
+    using System.Configuration;
+    using System.Diagnostics.Contracts;
+    using System.IO;
+    using System.Linq;
+    using System.Reflection;
+    using DependencyLocation.Configuration;
+    using Fasterflect;
+
+
+    /// <summary>
+    /// Clase para cargar todas las dependencias en el dominio de la aplicación en ejecución.
+    /// Cada librería que desee registrarse en el DependencyInjector, debe tener una o más clases
+    /// que implementen <typeparamref name="IDependencySetup"/>
+    /// </summary>
+    public class DependencyLoader
+    {
+        private const string CONFIGSECTIONPATH = @"dependencyInjector/dependencyConfiguration";
+        private readonly static DependencyLoader loader = new DependencyLoader();
+
+        /// <summary>
+        /// Gets the loader.
+        /// </summary>
+        public static DependencyLoader Loader
+        {
+            get
+            {
+                return loader;
+            }
+        }
+
+        /// <summary>
+        /// Loads the dependencies.
+        /// </summary>
+        public void LoadDependencies(string configfilepath = null)
+        {
+            DependencyConfiguration configSection = GetConfigSection(configfilepath);
+            string defaultKey = configSection.DefaultKey;
+            DependencyContainer injector = Dependency.Locator as DependencyContainer;
+
+            injector.DefaultKey = defaultKey;
+
+            foreach (DependencyElement element in this.GetDependencies(configSection))
+            {
+                string name = element.AssemblyName;
+                string path = element.AssemblyPath;
+                string prefix = element.NamedInstancePrefix;
+                Assembly assembly = null;
+                AssemblyName assemblyName = null;
+                if (string.IsNullOrEmpty(path))
+                {
+                    assemblyName = new AssemblyName(name);
+
+                }
+                else
+                {
+                    assemblyName = AssemblyName.GetAssemblyName(path);
+                }
+
+                assembly = Assembly.Load(assemblyName);
+                var types = assembly.GetTypes().Where(type => !type.IsGenericTypeDefinition && type.Implements<IDependencySetup>());
+                foreach (Type type in types)
+                {
+                    IDependencySetup setup = (IDependencySetup)type.CreateInstance();
+                    prefix = string.IsNullOrEmpty(prefix) ? "" : prefix + ".";
+                    setup.SetupDependencies(injector, prefix, defaultKey);
+                }
+            }
+        }
+
+
+
+        /// <summary>
+        /// Gets the dependencies in the configuration
+        /// </summary>
+        /// <returns>The dependencies</returns>
+        /// <param name="configSection"></param>
+        private IEnumerable<DependencyElement> GetDependencies(DependencyConfiguration configSection)
+        {
+            if (configSection != null)
+            {
+                foreach (DependencyElement element in configSection.Dependencies)
+                {
+                    yield return element;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets the config section.
+        /// </summary>
+        /// <returns></returns>
+        private DependencyConfiguration GetConfigSection(string configFilePath)
+        {
+            if (string.IsNullOrEmpty(configFilePath))
+            {
+                return ConfigurationManager.GetSection(CONFIGSECTIONPATH) as DependencyConfiguration;
+            }
+            else
+            {
+                Contract.Assume(new FileInfo(configFilePath).Exists,
+                    string.Format("El archivo de configuracion {0} no existe", configFilePath));
+                ExeConfigurationFileMap fileMap = new ExeConfigurationFileMap
+                {
+                    ExeConfigFilename = configFilePath
+                };
+
+                // Open the configuration and get the section
+                Configuration config = ConfigurationManager.OpenMappedExeConfiguration(fileMap, ConfigurationUserLevel.None);
+                ConfigurationSection section = config.GetSection(CONFIGSECTIONPATH);
+                return (DependencyConfiguration)section;
+            }
+        }
+    }
+}
