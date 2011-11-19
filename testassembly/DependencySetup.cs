@@ -2,6 +2,7 @@
 {
     using DependencyLocation;
     using DependencyLocation.Setup;
+
     public class DependencySetup : IDependencySetup
     {
         public void SetupDependencies(IDependencyLocator injector, string prefix, string defaultKey)

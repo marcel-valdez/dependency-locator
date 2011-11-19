@@ -91,30 +91,26 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DependencyLocation\IDependencyLocatorCodeContract.cs">
-      <DependentUpon>IDependencyLocator.cs</DependentUpon>
-    </Compile>
-    <Compile Include="DependencyLocation\IDependencyProviderCodeContract.cs">
-      <DependentUpon>IDependencyProvider.cs</DependentUpon>
-    </Compile>
+    <Compile Include="DependencyLocation\DependencyContainer.cs" />
     <Compile Include="Extensions\ReflectionExtensions.cs" />
     <Compile Include="DependencyLocation\Dependency.cs" />
     <Compile Include="DependencyLocation\Configuration\DependencyCollection.cs" />
     <Compile Include="DependencyLocation\Configuration\DependencyElement.cs" />
     <Compile Include="DependencyLocation\Configuration\DependencyConfigurationSection.cs" />
-    <Compile Include="DependencyLocation\DependencyContainer.cs" />
     <Compile Include="DependencyLocation\Setup\DependencyLoader.cs" />
-    <Compile Include="DependencyLocation\IDependencyProvider.cs" />
     <Compile Include="Extensions\HashCodeHelper.cs" />
-    <Compile Include="DependencyLocation\IDependencyLocator.cs" />
-    <Compile Include="DependencyLocation\Setup\IDependencySetup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reflection\TypeArrayComparer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\interfaces\interfaces.csproj">
+      <Project>{74EE8818-C42F-4864-9701-8B750A4DE802}</Project>
+      <Name>interfaces</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

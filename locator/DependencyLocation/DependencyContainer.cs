@@ -1,6 +1,6 @@
 ﻿// ----------------------------------------------------------------------
 // <copyright file="DependencyInjector.cs" company="Route Manager de México">
-//     Copyright Route Manager de México(c) 2011. All rights reserved.
+// Copyright Route Manager de México(c) 2011. All rights reserved.
 // </copyright>
 // ------------------------------------------------------------------------
 namespace DependencyLocation
@@ -347,16 +347,16 @@ namespace DependencyLocation
             Type[] ctorArgsTypes = constructors.Keys
                             .Where(types => types.Length == argTypes.Length)
                             .Where(ctorTypes =>
+                            {
+                                Contract.Assume(ctorTypes != null);
+                                bool match = true;
+                                for (int i = 0; match && i < argTypes.Length; i++)
                                 {
-                                    Contract.Assume(ctorTypes != null);
-                                    bool match = true;
-                                    for (int i = 0; match && i < argTypes.Length; i++)
-                                    {
-                                        match = ctorTypes[i].IsAssignableFrom(argTypes[i]);
-                                    }
+                                    match = ctorTypes[i].IsAssignableFrom(argTypes[i]);
+                                }
 
-                                    return match;
-                                }).First();
+                                return match;
+                            }).First();
 
             return constructors[ctorArgsTypes];
         }
@@ -367,7 +367,7 @@ namespace DependencyLocation
         /// <param name="subGeneric">The sub generic.</param>
         /// <param name="baseGeneric">The base generic.</param>
         /// <returns>
-        ///   <c>true</c> if [is subclass of raw generic] [the specified sub generic]; otherwise, <c>false</c>.
+        /// <c>true</c> if [is subclass of raw generic] [the specified sub generic]; otherwise, <c>false</c>.
         /// </returns>
         private bool IsSubclassOfRawGeneric(Type subGeneric, Type baseGeneric)
         {
@@ -375,7 +375,7 @@ namespace DependencyLocation
             Contract.Requires(baseGeneric != null, "baseGeneric is null.");
             Contract.Requires(subGeneric.IsGenericType);
             Contract.Requires(baseGeneric.IsGenericType);
-            
+
             while (subGeneric != typeof(object))
             {
                 Type currentType = subGeneric.IsGenericType ? subGeneric.GetGenericTypeDefinition() : subGeneric;
@@ -409,7 +409,7 @@ namespace DependencyLocation
             ConstructorInfo ctor = constructorableGenericType.GetConstructor(argumentTypes);
             return ctor.DelegateForCreateInstance();
         }
-        
+
         /// <summary>
         /// Creates the generic instance.
         /// </summary>
