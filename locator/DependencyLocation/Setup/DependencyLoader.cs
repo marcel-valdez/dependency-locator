@@ -52,31 +52,40 @@ namespace DependencyLocation.Setup
             {
                 string name = element.AssemblyName;
                 string path = element.AssemblyPath;
-                string prefix = element.NamedInstancePrefix;
-                Assembly assembly = null;
-                AssemblyName assemblyName = null;
-                if (string.IsNullOrEmpty(path))
-                {
-                    assemblyName = new AssemblyName(name);
-
-                }
-                else
-                {
-                    assemblyName = AssemblyName.GetAssemblyName(path);
-                }
-
-                assembly = Assembly.Load(assemblyName);
-                var types = assembly.GetTypes().Where(type => !type.IsGenericTypeDefinition && type.Implements<IDependencySetup>());
+                string prefix = string.IsNullOrEmpty(element.NamedInstancePrefix) ? "" : element.NamedInstancePrefix + ".";
+                Assembly assembly = LoadAssembly(name, path);
+                IEnumerable<Type> types = assembly.GetTypes()
+                    .Where(type => !type.IsGenericTypeDefinition && type.Implements<IDependencySetup>());
                 foreach (Type type in types)
                 {
                     IDependencySetup setup = (IDependencySetup)type.CreateInstance();
-                    prefix = string.IsNullOrEmpty(prefix) ? "" : prefix + ".";
                     setup.SetupDependencies(injector, prefix, defaultKey);
                 }
             }
         }
 
+        /// <summary>
+        /// Loads an assembly, by using either its name or its path.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <param name="path">The path.</param>
+        /// <returns>The loaded Assembly</returns>
+        private static Assembly LoadAssembly(string name, string path)
+        {
+            Contract.Requires(!String.IsNullOrEmpty(name) || !String.IsNullOrEmpty(path), "both path and name are null or empty.");
 
+            AssemblyName assemblyName = null;
+            if (string.IsNullOrEmpty(path))
+            {
+                assemblyName = new AssemblyName(name);
+            }
+            else
+            {
+                assemblyName = AssemblyName.GetAssemblyName(path);
+            }
+
+            return Assembly.Load(assemblyName);
+        }
 
         /// <summary>
         /// Gets the dependencies in the configuration

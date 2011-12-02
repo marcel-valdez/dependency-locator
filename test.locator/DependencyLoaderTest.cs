@@ -74,9 +74,10 @@
         public void LoadDependenciesTest()
         {
             // Arrange
+            //string configPath = System.AppDomain.CurrentDomain.BaseDirectory + ".\TestApp.Config"
 
             // Act
-            DependencyLoader.Loader.LoadDependencies(@".\TestApp.Config");
+            DependencyLoader.Loader.LoadDependencies(@".\TestApp.config");
             IServer concrete = Dependency.Locator.CreateNamedInstance<IServer>("testPrefix.testDefault");
 
             // Assert
@@ -113,7 +114,7 @@
         {   
             DependencyLoader target = DependencyLoader.Loader;
             DependencyConfiguration actual;
-            actual = target.CallMethod("GetConfigSection", @".\TestApp.Config") as DependencyConfiguration;
+            actual = target.CallMethod("GetConfigSection", @".\TestApp.config") as DependencyConfiguration;
             Assert.IsNotNull(actual);
         }
     }

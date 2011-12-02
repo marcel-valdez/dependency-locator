@@ -23,29 +23,29 @@ namespace DependencyLocation
         /// <summary>
         /// Son los valores de configuración del usuario
         /// </summary>
-        private readonly Dictionary<object, object> configuration = new Dictionary<object, object>();
+        private readonly Dictionary<object, object> mConfiguration = new Dictionary<object, object>();
 
         /// <summary>
         /// Son los constructores de tipos concretos registrados
         /// </summary>
-        private readonly Dictionary<KeyValuePair<Type, string>, Dictionary<Type[], ConstructorInvoker>> constructors =
+        private readonly Dictionary<KeyValuePair<Type, string>, Dictionary<Type[], ConstructorInvoker>> mConstructors =
                                     new Dictionary<KeyValuePair<Type, string>, Dictionary<Type[], ConstructorInvoker>>();
 
         /// <summary>
         /// Es el caché de constructores genérico pedidos
         /// </summary>
-        private readonly Dictionary<KeyValuePair<Type, string>, Dictionary<Type[], ConstructorInvoker>> genericConstructorsCache =
+        private readonly Dictionary<KeyValuePair<Type, string>, Dictionary<Type[], ConstructorInvoker>> mGenericConstructors =
                             new Dictionary<KeyValuePair<Type, string>, Dictionary<Type[], ConstructorInvoker>>();
 
         /// <summary>
         /// Son las relaciones de tipos genéricos registrados (GenericTypeDefinition -> AbstractGenericTypeDefinition)
         /// </summary>
-        private readonly Dictionary<KeyValuePair<Type, string>, object> genericTypeRelations = new Dictionary<KeyValuePair<Type, string>, object>();
+        private readonly Dictionary<KeyValuePair<Type, string>, object> mGenericTypeRelations = new Dictionary<KeyValuePair<Type, string>, object>();
 
         /// <summary>
         /// Son los singletons registrados en la aplicación
         /// </summary>
-        private readonly Dictionary<KeyValuePair<Type, string>, object> singletons = new Dictionary<KeyValuePair<Type, string>, object>();
+        private readonly Dictionary<KeyValuePair<Type, string>, object> mSingletons = new Dictionary<KeyValuePair<Type, string>, object>();
 
         /// <summary>
         /// Gets or sets the default key.
@@ -79,7 +79,7 @@ namespace DependencyLocation
         {
             try
             {
-                this.configuration.Add(key, value);
+                this.mConfiguration.Add(key, value);
             }
             catch (ArgumentException ex)
             {
@@ -98,7 +98,7 @@ namespace DependencyLocation
         {
             try
             {
-                object value = this.configuration[key];
+                object value = this.mConfiguration[key];
                 return value as Lazy<T> != null ? (value as Lazy<T>).Value : (T)value;
             }
             catch (ArgumentException ex)
@@ -133,7 +133,7 @@ namespace DependencyLocation
             try
             {
                 Dictionary<Type[], ConstructorInvoker> tInterfaceConstructors = null;
-                if (!this.constructors.TryGetValue(GetPair(interfaceType, key), out tInterfaceConstructors) && interfaceType.IsGenericType)
+                if (!this.mConstructors.TryGetValue(GetPair(interfaceType, key), out tInterfaceConstructors) && interfaceType.IsGenericType)
                 {
                     return this.CreateGenericInstance<TInterface>(key, args);
                 }
@@ -174,7 +174,7 @@ namespace DependencyLocation
             Type interfaceType = typeof(TInterface);
             try
             {
-                return LookupPair<TInterface>(this.singletons, interfaceType, key);
+                return LookupPair<TInterface>(this.mSingletons, interfaceType, key);
             }
             catch (KeyNotFoundException ex)
             {
@@ -194,9 +194,9 @@ namespace DependencyLocation
         {
             key = key ?? this.DefaultKey ?? "default";
             Type abstractType = typeof(TInterface);
-            lock (this.singletons)
+            lock (this.mSingletons)
             {
-                this.singletons.Add(GetPair(abstractType, key), singleton);
+                this.mSingletons.Add(GetPair(abstractType, key), singleton);
             }
         }
 
@@ -211,9 +211,9 @@ namespace DependencyLocation
             key = key ?? this.DefaultKey ?? "default";
             Lazy<TInterface> lazySingleton = new Lazy<TInterface>(lazyEvaluator);
             Type type = typeof(TInterface);
-            lock (this.singletons)
+            lock (this.mSingletons)
             {
-                this.singletons.Add(GetPair(type, key), lazySingleton);
+                this.mSingletons.Add(GetPair(type, key), lazySingleton);
             }
         }
 
@@ -233,23 +233,23 @@ namespace DependencyLocation
 
             Contract.Assume(abstractType.IsAssignableFrom(concreteType));
             key = key ?? this.DefaultKey ?? "default";
-            ConstructorInfo[] constructors = concreteType.GetConstructors();
-            foreach (var constructor in constructors)
+            ConstructorInfo[] constructorsInfo = concreteType.GetConstructors();
+            foreach (var constructorInfo in constructorsInfo)
             {
-                lock (this.constructors)
+                lock (this.mConstructors)
                 {
-                    Dictionary<Type[], ConstructorInvoker> typeConstructors = null;
-                    if (!this.constructors.TryGetValue(GetPair(abstractType, key), out typeConstructors))
+                    Dictionary<Type[], ConstructorInvoker> constructors = null;
+                    if (!this.mConstructors.TryGetValue(GetPair(abstractType, key), out constructors))
                     {
-                        typeConstructors = new Dictionary<Type[], ConstructorInvoker>(new TypeArrayComparer());
-                        this.constructors.Add(
+                        constructors = new Dictionary<Type[], ConstructorInvoker>(new TypeArrayComparer());
+                        this.mConstructors.Add(
                             GetPair(abstractType, key),
-                            typeConstructors);
+                            constructors);
                     }
 
                     try
                     {
-                        Type[] paramTypes = constructor.GetParameters()
+                        Type[] paramTypes = constructorInfo.GetParameters()
                                                 .Select(info => info.ParameterType)
                                                 .ToArray();
                         if (paramTypes.Length == 0)
@@ -257,8 +257,12 @@ namespace DependencyLocation
                             paramTypes = Type.EmptyTypes;
                         }
 
-                        ConstructorInvoker invoker = constructor.DelegateForCreateInstance();
-                        typeConstructors.Add(paramTypes, invoker);
+                        ConstructorInvoker invoker = null;
+                        if (!constructors.TryGetValue(paramTypes, out invoker))
+                        {
+                            invoker = constructorInfo.DelegateForCreateInstance();
+                            constructors.Add(paramTypes, invoker);
+                        }
                     }
                     catch (ArgumentException ex)
                     {
@@ -290,11 +294,11 @@ namespace DependencyLocation
         /// </summary>
         public void ReleaseInjections()
         {
-            this.singletons.Clear();
-            this.configuration.Clear();
-            this.constructors.Clear();
-            this.genericTypeRelations.Clear();
-            this.genericConstructorsCache.Clear();
+            this.mSingletons.Clear();
+            this.mConfiguration.Clear();
+            this.mConstructors.Clear();
+            this.mGenericTypeRelations.Clear();
+            this.mGenericConstructors.Clear();
         }
 
         /// <summary>
@@ -423,26 +427,26 @@ namespace DependencyLocation
             Contract.Requires(typeof(TInterface).IsGenericType);
             Contract.Ensures(Contract.Result<TInterface>() != null);
 
-            Type[] argumentTypes = Type.GetTypeArray(args);
-            Type requestedType = typeof(TInterface);
-            Type requestedGenericDefinition = requestedType.GetGenericTypeDefinition();
-            KeyValuePair<Type, string> cacheKeyPair = GetPair(requestedType, key);
+            Type[] argTypes = Type.GetTypeArray(args);
+            Type tInterfaceType = typeof(TInterface);
+            Type genericTypeDefinition = tInterfaceType.GetGenericTypeDefinition();
+            KeyValuePair<Type, string> cacheKeyPair = GetPair(tInterfaceType, key);
 
-            Dictionary<Type[], ConstructorInvoker> cachedConstructors = null;
-            if (!this.genericConstructorsCache.TryGetValue(cacheKeyPair, out cachedConstructors))
+            Dictionary<Type[], ConstructorInvoker> constructors = null;
+            if (!this.mGenericConstructors.TryGetValue(cacheKeyPair, out constructors))
             {
-                cachedConstructors = new Dictionary<Type[], ConstructorInvoker>(new TypeArrayComparer());
-                this.genericConstructorsCache.Add(cacheKeyPair, cachedConstructors);
+                constructors = new Dictionary<Type[], ConstructorInvoker>(new TypeArrayComparer());
+                this.mGenericConstructors.Add(cacheKeyPair, constructors);
             }
 
             ConstructorInvoker constructor = null;
-            if (!cachedConstructors.TryGetValue(argumentTypes, out constructor))
+            if (!constructors.TryGetValue(argTypes, out constructor))
             {
-                Contract.Assume(requestedGenericDefinition != null);
-                Type storedGenericTypeDefinition = (Type)this.genericTypeRelations[GetPair(requestedGenericDefinition, key)];
-                Contract.Assume(storedGenericTypeDefinition != null, "There is no stored generic type definition for: " + requestedGenericDefinition);
-                constructor = CreateConstructor(storedGenericTypeDefinition, requestedType, argumentTypes);
-                cachedConstructors.Add(argumentTypes, constructor);
+                Contract.Assume(genericTypeDefinition != null);
+                Type storedGenericTypeDefinition = (Type)this.mGenericTypeRelations[GetPair(genericTypeDefinition, key)];
+                Contract.Assume(storedGenericTypeDefinition != null, "There is no stored generic type definition for: " + genericTypeDefinition);
+                constructor = CreateConstructor(storedGenericTypeDefinition, tInterfaceType, argTypes);
+                constructors.Add(argTypes, constructor);
             }
 
             Contract.Assume(constructor != null, "Could not find the cache'd constructor, nor could a constructor be created.");
@@ -468,7 +472,7 @@ namespace DependencyLocation
                                 .Contains(abstractType.GUID));
 
             key = key ?? this.DefaultKey ?? "default";
-            this.genericTypeRelations.Add(new KeyValuePair<Type, string>(abstractType, key), concreteType);
+            this.mGenericTypeRelations.Add(new KeyValuePair<Type, string>(abstractType, key), concreteType);
         }
 
         /// <summary>
@@ -477,9 +481,9 @@ namespace DependencyLocation
         [ContractInvariantMethod]
         private void InvariantMethod()
         {
-            Contract.Invariant(this.singletons != null);
-            Contract.Invariant(this.configuration != null);
-            Contract.Invariant(this.constructors != null);
+            Contract.Invariant(this.mSingletons != null);
+            Contract.Invariant(this.mConfiguration != null);
+            Contract.Invariant(this.mConstructors != null);
         }
     }
 }
