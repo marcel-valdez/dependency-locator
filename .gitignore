@@ -1,1 +1,10 @@
 # git ignore file
+/locator/obj
+/locator/bin
+/interfaces/bin
+/interfaces/obj
+/test.locator/bin
+/test.locator/obj
+/testassembly/bin
+/testassembly/obj
+/locator/TestResults
