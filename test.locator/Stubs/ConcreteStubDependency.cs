@@ -1,4 +1,3 @@
-
 namespace Test.Locator
 {
     public class ConcreteStubDependency : IStubDependency
@@ -16,7 +15,6 @@ namespace Test.Locator
         {
             this.Data = data + moredata + postfix;
         }
-
 
         public string Data
         {

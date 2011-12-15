@@ -1,4 +1,3 @@
-
 namespace Test.Locator
 {
     public class Generic<T> : BaseGeneric<T>

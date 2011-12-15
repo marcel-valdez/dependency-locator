@@ -19,7 +19,6 @@ namespace DependencyLocation
     /// </summary>
     internal class DependencyContainer : IDependencyLocator, IDependencyProvider
     {
-
         /// <summary>
         /// Son los valores de configuración del usuario
         /// </summary>
@@ -83,7 +82,6 @@ namespace DependencyLocation
             }
             catch (ArgumentException ex)
             {
-
                 throw new ConfigurationErrorsException("Configuration value already set.", ex);
             }
         }
@@ -107,7 +105,6 @@ namespace DependencyLocation
                 throw new ConfigurationErrorsException(mensaje, ex);
             }
         }
-
 
         /// <summary>
         /// Creates the instance.

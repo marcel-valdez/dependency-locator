@@ -30,7 +30,6 @@ namespace DependencyLocation
             return default(T);
         }
 
-
         public TInterface CreateNamedInstance<TInterface>(string key, params object[] args)
         {
             throw new NotImplementedException();

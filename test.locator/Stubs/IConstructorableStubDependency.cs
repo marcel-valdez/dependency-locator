@@ -1,4 +1,3 @@
-
 namespace Test.Locator
 {
     public interface IConstructorableStub

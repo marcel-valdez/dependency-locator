@@ -1,4 +1,3 @@
-
 namespace Test.Locator
 {
     public class AnotherConstructorableStub : ConstructorableStub
@@ -6,13 +5,11 @@ namespace Test.Locator
         public AnotherConstructorableStub(IStubDependency dependency)
             : base(dependency)
         {
-            
         }
 
         public AnotherConstructorableStub(IStubDependency dependency, IConstructorableStub another)
             : base(dependency, another)
         {
-            
         }
     }
 }

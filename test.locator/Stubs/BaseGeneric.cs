@@ -1,4 +1,3 @@
-
 namespace Test.Locator
 {
     public abstract class BaseGeneric<T> : IGeneric<T>
@@ -8,6 +7,7 @@ namespace Test.Locator
         {
             this.Property = arg;
         }
+
         abstract public T Property
         {
             get;

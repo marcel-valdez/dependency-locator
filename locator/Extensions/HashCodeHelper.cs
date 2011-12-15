@@ -15,7 +15,7 @@ namespace CommonUtilities
         /// <typeparam name="T"></typeparam>
         /// <param name="args">The args.</param>
         /// <returns>
-        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
+        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.
         /// </returns>
         public static int GetHashCode<T>(params T[] args)
         {
@@ -42,7 +42,7 @@ namespace CommonUtilities
                     datum = BitConverter.GetBytes(obj.GetHashCode());
                     Array.Reverse(datum);
                 }
-                
+
                 datum.CopyTo(data, i * 4);
             }
 

@@ -1,4 +1,3 @@
-
 namespace Test.Locator
 {
     public class InheritedStubDependency : ConcreteStubDependency
@@ -10,12 +9,11 @@ namespace Test.Locator
 
         public InheritedStubDependency()
         {
-            
         }
 
         public InheritedStubDependency(string data, int moredata, string postfix)
             : base(data, moredata, postfix)
-        {   
+        {
         }
     }
 }

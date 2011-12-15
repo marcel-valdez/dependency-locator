@@ -11,8 +11,6 @@
     [TestClass()]
     public class TypeArrayComparerTest
     {
-
-
         private TestContext testContextInstance;
 
         /// <summary>
@@ -32,7 +30,8 @@
         }
 
         #region Additional test attributes
-        // 
+
+        //
         //You can use the following additional attributes as you write your tests:
         //
         //Use ClassInitialize to run code before running the first test in the class
@@ -59,8 +58,8 @@
         //{
         //}
         //
-        #endregion
 
+        #endregion Additional test attributes
 
         /// <summary>
         ///A test for Equals

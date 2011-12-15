@@ -8,7 +8,7 @@
     using Fasterflect;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using TestAssembly;
-    
+
     /// <summary>
     ///This is a test class for DependencyLoaderTest and is intended
     ///to contain all DependencyLoaderTest Unit Tests
@@ -16,7 +16,6 @@
     [TestClass()]
     public class DependencyLoaderTest
     {
-
         private TestContext testContextInstance;
 
         /// <summary>
@@ -37,7 +36,8 @@
         }
 
         #region Additional test attributes
-        // 
+
+        //
         //You can use the following additional attributes as you write your tests:
         //
         //Use ClassInitialize to run code before running the first test in the class
@@ -45,6 +45,7 @@
         public static void MyClassInitialize(TestContext testContext)
         {
         }
+
         //
         //Use ClassCleanup to run code after all tests in a class have run
         //[ClassCleanup()]
@@ -64,8 +65,8 @@
         //{
         //}
         //
-        #endregion
 
+        #endregion Additional test attributes
 
         /// <summary>
         ///A test for LoadDependencies
@@ -111,7 +112,7 @@
         ///</summary>
         [TestMethod()]
         public void GetConfigSectionTest()
-        {   
+        {
             DependencyLoader target = DependencyLoader.Loader;
             DependencyConfiguration actual;
             actual = target.CallMethod("GetConfigSection", @".\TestApp.config") as DependencyConfiguration;

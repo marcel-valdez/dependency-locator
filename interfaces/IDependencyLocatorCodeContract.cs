@@ -45,6 +45,7 @@ namespace DependencyLocation
         {
             throw new NotImplementedException();
         }
-        #endregion
+
+        #endregion IDependencyLocator Members
     }
 }

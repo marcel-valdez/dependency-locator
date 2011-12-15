@@ -8,3 +8,5 @@
 /testassembly/bin
 /testassembly/obj
 /locator/TestResults
+*.suo
+TestResults

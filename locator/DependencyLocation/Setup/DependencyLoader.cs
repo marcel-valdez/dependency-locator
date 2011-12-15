@@ -15,7 +15,6 @@ namespace DependencyLocation.Setup
     using DependencyLocation.Configuration;
     using Fasterflect;
 
-
     /// <summary>
     /// Clase para cargar todas las dependencias en el dominio de la aplicación en ejecución.
     /// Cada librería que desee registrarse en el DependencyInjector, debe tener una o más clases
@@ -116,7 +115,7 @@ namespace DependencyLocation.Setup
             else
             {
                 Contract.Assume(new FileInfo(configFilePath).Exists,
-                    string.Format("El archivo de configuracion {0} no existe", configFilePath));
+                    string.Format(Properties.Resources.ConfigFileNotFound, configFilePath));
                 ExeConfigurationFileMap fileMap = new ExeConfigurationFileMap
                 {
                     ExeConfigFilename = configFilePath

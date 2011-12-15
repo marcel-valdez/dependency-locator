@@ -1,6 +1,7 @@
 namespace TestAssembly
 {
     using System.Xml;
+
     public interface IServer
     {
         string GerenciaName { get; set; }

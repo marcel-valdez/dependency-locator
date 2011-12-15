@@ -29,7 +29,8 @@
         }
 
         #region Additional test attributes
-        // 
+
+        //
         //You can use the following additional attributes as you write your tests:
         //
         //Use ClassInitialize to run code before running the first test in the class
@@ -57,8 +58,7 @@
             (Dependency.Locator as IDependencyLocator).ReleaseInjections();
         }
 
-        #endregion
-
+        #endregion Additional test attributes
 
         /// <summary>
         ///A test for CreateInstance
@@ -100,7 +100,6 @@
             Assert.AreEqual("test", firstConstructorResult);
             Assert.AreEqual("test" + 10 + "postfix", secondConstructorResult);
         }
-
 
         /// <summary>
         ///A test for GetSingleton
@@ -160,8 +159,8 @@
             var target = Dependency.Locator as IDependencyLocator;
             target.SetupDependency<ConstructorableStub, IConstructorableStub>("default");
             InheritedStubDependency argument = new InheritedStubDependency
-            { 
-                Data = "test" 
+            {
+                Data = "test"
             };
 
             // Act
@@ -171,7 +170,6 @@
             Assert.IsNotNull(actual);
             Assert.AreEqual(argument.Data, actual.Data);
         }
-
 
         [TestMethod()]
         public void CanCreateInstancesWithDerivedInstancesOfTwoParameterTypes()

@@ -2,6 +2,7 @@ namespace TestAssembly
 {
     using System;
     using System.Xml;
+
     public class ConcreteServer : IServer
     {
         public ConcreteServer()
