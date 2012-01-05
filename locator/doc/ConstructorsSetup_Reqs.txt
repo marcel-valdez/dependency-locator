@@ -1,0 +1,98 @@
+/*
+* Resumen:
+ Se desea agregar la capacidad de dependency-locator, para definir interfaces  con las cuáles se informe al usuario de una implementaciòn, los argumentos (y sus respectivos tipos) y las variaciones de argumentos con los que se pueda crear una instancia.
+
+Objetivo de negocio al que ayuda:
+Facilitar la coordinaciòn entre equipos para la definiciòn de interfaces de componentes.
+
+Objetivo Técnico al que ayuda:
+Proveer (la opción de) chequeo estático de creación de instancias, para reducir errores en tiempo de ejecución, y que sean encontrados en tiempo de compilación.
+
+Requerimientos Funcionales:
++ Que se puedan crear objetos de una interfaz implementada, utilizando objetos que contengan los paràmetros para los constructores de las implementaciones.
++ Que no se requiera de ninguna otra dependencia agregada para crear una definición de constructor.
++ Que la definiciòn de argumentos se haga en (opciones: 
+  * en el Componente donde se tiene la clase que implementa IDependencySetup;
+  *  o en el Componente donde se definen las interfaces.
+  * un tercer componentes donde únicamente se definen constructores
+  
+	Anàlisis de opciones
+		Se debe tomar en cuenta que: Al definir una interfaz, esta será una abstracción, por lo tanto es posible que no se conozcan los parámetros con los que se construirán futuras instancias concretas de la implementación.
+	
+		Tomando eso en cuenta, se sabe que no se podrá definir un constructor de implementación de interfaz hasta que no exista la implementación.
+		
+		Porsupuesto, se podría definir, en el componente de definición de interfaces, las interfaces que debe utilizar cada constructor de interfaz (recurso/servicio).
+		
+		En mi opinión se debe lograr esto:
+		1. Que los constructores, en realidad, se puedan definir donde desee el desarrollador.
+		2. El uso de constructores sea opcional, que se pueda seguir utilizando la misma técnica ya utilizada.
+		3. Que la estructura ideal contenga los constructores en un componente de definición de constructores por separado.
+
+Definiciòn de API debe de ser:
+
+Para la explotaciòn de un constructor definido:
+*/
+IPerson fisica = Dependency.Locator.Create<IPerson>(
+	new PersonaFisicaArgs {
+		Name = "Marcel", 
+		Age = 26, 
+		IsMarried = true 
+	});
+
+IPerson moral = Dependency.Locator.Create<IPerson>(
+	new PersonaMoralArgs { 
+		Name = "RecruitmentExpress", 
+		CreationDate = DateTime.Now, 
+		IsLucrative = true 
+	});
+// Nota: Se sabe que el compilador de C# no necesita que se le diga <IPerson>, por lo tanto la llamada corta sería:
+IPerson moral = Dependency.Locator.Create(
+	new PersonaMoralArgs {
+		Name = "RecruitmentExpress", 
+		CreationDate = DateTime.Now, 
+		IsLucrative = true 
+	});
+/*
+* Para definir constructor:
+* Nótese que a pesar del nombre PersonaFisicaArgs, esta bien podría tener 
+* cualquier implementación deseada, en el componente de implementaciones
+*/
+public class PersonaFisicaArgs : IConstructorArgs<IPerson> {
+	public string Name {
+		get;
+		set;
+	}
+	
+	public int Age {
+		get;
+		set;
+	}
+	
+	public bool IsMarried {
+		get;
+		set;
+	}
+}
+
+public class PersonaMoralArgs : IConstructorArgs<IPerson> {
+	public string Name {
+		get;
+		set;
+	}
+	
+	public DateTime CreationDate {
+		get;
+		set;
+	}
+	
+	public bool IsLucrative {
+		get;
+		set;
+	}
+}
+/*
+Requerimientos No Funcionales:
++ Que la definiciòn de tales interfaces sea expresivo
++ Que el uso de tales interfaces sea sencillo y no requiera de muchas lìneas ni texto
++ Que se haga amplio uso de IntelliSense y auto  para fàcil desarrollo de la API.
+*/
