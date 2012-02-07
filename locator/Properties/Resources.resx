@@ -101,4 +101,12 @@
     <value>El archivo de configuracion {0} no existe</value>
     <comment>ConfigFileNotFound description</comment>
   </data>
+  <data name="AnErrorOcurredDuringConfiguration" xml:space="preserve">
+    <value>An error ocurred during configuration, value: {0}, cannot be set for the key: {1}.</value>
+    <comment>AnErrorOcurredDuringConfiguration description</comment>
+  </data>
+  <data name="ConfigurationValueNotSetForKey" xml:space="preserve">
+    <value>Configuration value for {0} not set.</value>
+    <comment>ConfigurationValueNotSetForKey description</comment>
+  </data>
 </root>

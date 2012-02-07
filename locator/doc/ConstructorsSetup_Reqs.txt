@@ -6,14 +6,14 @@ Objetivo de negocio al que ayuda:
 Facilitar la coordinaciòn entre equipos para la definiciòn de interfaces de componentes.
 
 Objetivo Técnico al que ayuda:
-Proveer (la opción de) chequeo estático de creación de instancias, para reducir errores en tiempo de ejecución, y que sean encontrados en tiempo de compilación.
+Proveer la opción de chequeo estático de creación de instancias, para reducir errores en tiempo de ejecución, y que sean encontrados en tiempo de compilación.
 
 Requerimientos Funcionales:
 + Que se puedan crear objetos de una interfaz implementada, utilizando objetos que contengan los paràmetros para los constructores de las implementaciones.
 + Que no se requiera de ninguna otra dependencia agregada para crear una definición de constructor.
 + Que la definiciòn de argumentos se haga en (opciones: 
   * en el Componente donde se tiene la clase que implementa IDependencySetup;
-  *  o en el Componente donde se definen las interfaces.
+  * o en el Componente donde se definen las interfaces.
   * un tercer componentes donde únicamente se definen constructores
   
 	Anàlisis de opciones
@@ -25,74 +25,143 @@ Requerimientos Funcionales:
 		
 		En mi opinión se debe lograr esto:
 		1. Que los constructores, en realidad, se puedan definir donde desee el desarrollador.
-		2. El uso de constructores sea opcional, que se pueda seguir utilizando la misma técnica ya utilizada.
+		2. El uso de constructores sea opcional, que se pueda seguir utilizando la misma técnica (params object[]) ya utilizada.
 		3. Que la estructura ideal contenga los constructores en un componente de definición de constructores por separado.
 
 Definiciòn de API debe de ser:
 
 Para la explotaciòn de un constructor definido:
 */
-IPerson fisica = Dependency.Locator.Create<IPerson>(
-	new PersonaFisicaArgs {
-		Name = "Marcel", 
-		Age = 26, 
-		IsMarried = true 
-	});
+/************************************************************
+* #1. Forma más fácil de leer, escrita como prosa.
+*************************************************************/
+IPersona moral = Dependency.Locator
+	.Create<IPersona>() // IConstructable<TInstance> Create<TInstance>()
+	.With<IPersonaMoralParams>( // Este sí regresa IPersona
+		(IPersonaMoralParams args) => 
+		{
+			args.Name = "RecruitmentExpress";
+			args.CreationDate = DateTime.Now;
+			args.IsLucrative = true;
+		}); // Automáticamente sabe que es una persona moral
+		
+IPersona fisica = Dependency.Locator
+	.Create<IPersona>() // IConstructable<TInstance> Create<TInstance>()
+	.With<IPersonaFisicaArgs>(
+		(IPersonaFisicaArgs args) => 
+		{
+			args.Name = "Marcel"; //Debe tener Intellisense
+			args.Age = 26;
+			args.IsMarried = true;
+		}); // TInstance IConstructable<TInstance>.With<TParams>(Action<TParams>)
+		//               where TParams : IConstructorParams<TInstance>
 
-IPerson moral = Dependency.Locator.Create<IPerson>(
-	new PersonaMoralArgs { 
-		Name = "RecruitmentExpress", 
-		CreationDate = DateTime.Now, 
-		IsLucrative = true 
-	});
-// Nota: Se sabe que el compilador de C# no necesita que se le diga <IPerson>, por lo tanto la llamada corta sería:
-IPerson moral = Dependency.Locator.Create(
-	new PersonaMoralArgs {
-		Name = "RecruitmentExpress", 
-		CreationDate = DateTime.Now, 
-		IsLucrative = true 
-	});
-/*
-* Para definir constructor:
-* Nótese que a pesar del nombre PersonaFisicaArgs, esta bien podría tener 
-* cualquier implementación deseada, en el componente de implementaciones
-*/
-public class PersonaFisicaArgs : IConstructorArgs<IPerson> {
-	public string Name {
-		get;
-		set;
-	}
-	
-	public int Age {
-		get;
-		set;
-	}
-	
-	public bool IsMarried {
-		get;
-		set;
-	}
-}
+	//versión corta
+	IPersona fisica = Dependency.Locator
+		.Create<IPersona>()
+		.With<IPersonaFisicaParams>(
+			args =>
+			{
+				args.Name = "Marcel";
+				args.Age = 26;
+				args.IsMarried = true;
+			});
 
-public class PersonaMoralArgs : IConstructorArgs<IPerson> {
-	public string Name {
-		get;
-		set;
+	// más corta
+	IPersona fisica = Dependency.Locator
+	.Create<IPersona>()
+	.With<IPersonaFisicaParams>(args => args.Set(name = "Marcel", age = 26, isMarried = true));
+
+	// aún más corta
+	IPersona fisica = Dependency.Locator
+	.Create<IPersona>()
+	.With<IPersonaFisicaParams>(args => args.Set("Marcel", 26, true));
+	
+/************************************************************************
+* #2. Forma más corta, no tan fácil de leer, pero menos tecleo. 
+*     Esta implementación es opcional, pues no es buena práctica de programación.
+*************************************************************************/
+	IPersona fisica = Dependency.Locator
+		.Create<IPersona>(// T Create<T>(IConstructorParams<T>)
+			(IPersonaFisicaArgs args) => 
+			{
+				args.Name = "Marcel"; //Debe tener Intellisense
+				args.Age = 26;
+				args.IsMarried = true;
+			});	// TInstance Create<TInstance, TParams>(Action<TParams>)
+		        // where TParams : IConstructorParams<TInstance>
+	
+	// forma corta
+	IPersona fisica = Dependency.Locator
+		.Create((IPersonaFisicaParams args) => 
+		{
+			args.Name = "Marcel";
+			args.Age = 26;
+			args.IsMarried = true;
+		});
+	
+	// aún más corta
+	IPersona fisica = Dependency.Locator
+		.Create((IPersonaFisicaParams args) => args.Set(name = "Marcel", age = 26, isMarried = true));
+	
+	// lo más corta posible:
+	IPersona fisica = Dependency.Locator
+		.Create((IPersonaFisicaParams args) => args.Set("Marcel", 26, true));
+		
+	// El problema con esta manifestación, es que no se indica en la invocación, el tipo que va regresar la instancia, 
+	// por ejemplo:
+	var personaFisica = Dependency.Locator
+		.Create((IPersonaFisicaParams args) => args.Set("Marciano", 206, false));
+	// Aunque el nombre de variable indica persona física, esto bien podría ser IExtraterrestre!
+	// y el programador no se daría cuenta del error en un code review
+	
+	/*
+	* Para definir constructor:
+	* Nótese que a pesar del nombre IPersonaFisicaArgs, esta bien podría tener 
+	* cualquier implementación deseada, en el componente de implementaciones
+	*/
+	public interface IPersonaFisicaParams : IConstructorParams<IPersona>
+	{
+		/*
+		* Se puede hacer lo que sea aquí para clarificar los parámetros del constructor,
+		* tal como hacerlos opcionales: isMarried = false, por ejemplo; poner una
+		* condición (de interfaz) en el contrato:
+		* 		Contract.Requires(!string.IsNullOrEmpty(name));
+		*		Contract.Requires(Regex.IsMatch(name, @"^([A-Z][a-z]{1,})([ ][A-Z][a-z]{1,})*$"));
+		* Requiere que el nombre empieze con una letra y acabe con una letra y en medio puede haber letras espacios
+		*		Contract.Requires(age >= 0);
+		*/
+		void Set(string name, int age, bool isMarried);
+		/*
+		* Se puede documentar en XML si el parámetro es opcional, e inclusive se puede
+		* poner en un CodeContract el requerimiento (o no-requerimiento) del valor
+		* de los parámetros del constructor.
+		*/
+		string Name { get; set; }
+		int Age { get; set; }
+		bool IsMarried { get; set; }
+	}
+	// y dónde:
+	public interface IConstructorParams<T>
+	{
+		object[] Parameters { get; }
 	}
 	
-	public DateTime CreationDate {
-		get;
-		set;
-	}
 	
-	public bool IsLucrative {
-		get;
-		set;
-	}
-}
+IPersona extraterrestre = Dependency.Locator
+	.Create<IPersona>() // Regresa un tipo que NO es IPersona
+	.Named("marciana") // Ya que una persona de Marte es una implementación distinta, aquí se especifíca que queremos la implementación cuyo nombre de implementación es marciana, estoy pensando que talvez se podría utilizar un enum, pero eso no es muy -dinámico-, ni configurable.
+	.With<IExtraterrestreParam>( // Este sí regresa IPersona
+		arg => 
+		{
+			arg.Name = "Marvin",
+			arg.Age = 206,
+			arg.IsMarried = false
+		}); // Automáticamente sabe que es una persona física
+
 /*
 Requerimientos No Funcionales:
 + Que la definiciòn de tales interfaces sea expresivo
 + Que el uso de tales interfaces sea sencillo y no requiera de muchas lìneas ni texto
-+ Que se haga amplio uso de IntelliSense y auto  para fàcil desarrollo de la API.
++ Que se haga amplio uso de IntelliSense y autocompletion  para fàcil desarrollo de la API.
 */

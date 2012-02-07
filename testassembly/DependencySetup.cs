@@ -5,7 +5,7 @@
 
     public class DependencySetup : IDependencySetup
     {
-        public void SetupDependencies(IDependencyLocator injector, string prefix, string defaultKey)
+        public void SetupDependencies(IDependencyConfigurator injector, string prefix, string defaultKey)
         {
             string key = prefix + defaultKey;
 

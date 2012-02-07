@@ -12,7 +12,7 @@ namespace DependencyLocation.Setup
     using System.IO;
     using System.Linq;
     using System.Reflection;
-    using DependencyLocation.Configuration;
+    using Configuration;
     using Fasterflect;
 
     /// <summary>
@@ -53,12 +53,13 @@ namespace DependencyLocation.Setup
                 string path = element.AssemblyPath;
                 string prefix = string.IsNullOrEmpty(element.NamedInstancePrefix) ? "" : element.NamedInstancePrefix + ".";
                 Assembly assembly = LoadAssembly(name, path);
-                IEnumerable<Type> types = assembly.GetTypes()
-                    .Where(type => !type.IsGenericTypeDefinition && type.Implements<IDependencySetup>());
-                foreach (Type type in types)
+                foreach (Type type in assembly.GetTypes())
                 {
-                    IDependencySetup setup = (IDependencySetup)type.CreateInstance();
-                    setup.SetupDependencies(injector, prefix, defaultKey);
+                    if (typeof(IDependencySetup).IsAssignableFrom(type))
+                    {
+                        IDependencySetup setup = (IDependencySetup)type.CreateInstance();
+                        setup.SetupDependencies(injector, prefix, defaultKey);
+                    }
                 }
             }
         }

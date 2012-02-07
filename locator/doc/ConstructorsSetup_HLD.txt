@@ -1,0 +1,22 @@
+Distribución de Componentes:
+1. Componentes de interfaces
+2. Componentes de declaración de interfaces de parámetros de constructores
+3. Componentes de configuración de dependencias
+4. Componentes de implementación de interfaces
+
+[No cambia]
+1. En el componente de interfaces:
+Se declaran las interfaces que se implementaran en el componente (4) de implementación.
+
+[Nuevo]
+2. En el componente de declaración de parámetros de constructores:
+Este componente hace referencia al componente de interfaces, y declara las -interfaces- que se utilizarán para crear instancias implementadas.
+
+[Cambia]
+3. En el componente de  configuración de dependencias:
+Este componente hace referencia al componente de interfaces y declaración de interfaces de parámetros de constructores.
+Configura las dependencias, mapea las interfaces con sus implementaciones, así como declara las clases que implementan los constructores del componente (2) de declaración parámetros de constructores.
+
+[No cambia]
+4. En el componente de implementación de constructores:
+Este componente sigue igual, y solamente hace referencia al componente de interfaces, las cuáles implementa.

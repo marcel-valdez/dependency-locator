@@ -18,6 +18,6 @@ namespace DependencyLocation.Setup
         /// <param name="injector">The injector.</param>
         /// <param name="prefix">The prefix.</param>
         /// <param name="defaultKey">The default key.</param>
-        void SetupDependencies(IDependencyLocator injector, string prefix, string defaultKey);
+        void SetupDependencies(IDependencyConfigurator injector, string prefix, string defaultKey);
     }
 }

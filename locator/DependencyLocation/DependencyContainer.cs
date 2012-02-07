@@ -17,7 +17,7 @@ namespace DependencyLocation
     /// <summary>
     /// Clase sencilla, utilizada para cargar dependencias dinámicamente.
     /// </summary>
-    internal class DependencyContainer : IDependencyLocator, IDependencyProvider
+    internal class DependencyContainer : IDependencyConfigurator, IDependencyProvider
     {
         /// <summary>
         /// Son los valores de configuración del usuario
@@ -78,11 +78,20 @@ namespace DependencyLocation
         {
             try
             {
-                this.mConfiguration.Add(key, value);
+                if (this.mConfiguration.ContainsKey(key))
+                {
+                    this.mConfiguration[key] = value;
+                }
+                else
+                {
+                    this.mConfiguration.Add(key, value);
+                }
             }
             catch (ArgumentException ex)
             {
-                throw new ConfigurationErrorsException("Configuration value already set.", ex);
+                throw new ConfigurationErrorsException(String.Format(Properties.Resources.AnErrorOcurredDuringConfiguration, 
+                                                           value, 
+                                                           key), ex);
             }
         }
 
@@ -101,7 +110,7 @@ namespace DependencyLocation
             }
             catch (ArgumentException ex)
             {
-                string mensaje = string.Format("Configuration value for {0} not set.", key);
+                string mensaje = string.Format(Properties.Resources.ConfigurationValueNotSetForKey, key);
                 throw new ConfigurationErrorsException(mensaje, ex);
             }
         }

@@ -55,7 +55,7 @@
         [TestCleanup()]
         public void MyTestCleanup()
         {
-            (Dependency.Locator as IDependencyLocator).ReleaseInjections();
+            (Dependency.Locator as IDependencyConfigurator).ReleaseInjections();
         }
 
         #endregion Additional test attributes
@@ -80,7 +80,7 @@
         [TestMethod()]
         public void CanSetupAndCreateParameterlessInstance()
         {
-            (Dependency.Locator as IDependencyLocator).SetupDependency<ConcreteStubDependency, IStubDependency>();
+            (Dependency.Locator as IDependencyConfigurator).SetupDependency<ConcreteStubDependency, IStubDependency>();
             CreateInstanceTestHelper<IStubDependency>();
         }
 
@@ -88,7 +88,7 @@
         public void CanSetupAndCreateParameterizedInstance()
         {
             // Arrange
-            (Dependency.Locator as IDependencyLocator).SetupDependency<ConcreteStubDependency, IStubDependency>();
+            (Dependency.Locator as IDependencyConfigurator).SetupDependency<ConcreteStubDependency, IStubDependency>();
 
             // Act
             IStubDependency actual = CreateInstanceTestHelper<IStubDependency>("default", "test");
@@ -124,7 +124,7 @@
         {
             // Arrange
             ConcreteStubDependency expected = new ConcreteStubDependency("single");
-            (Dependency.Locator as IDependencyLocator).SetupSingletonDependency<IStubDependency>(expected);
+            (Dependency.Locator as IDependencyConfigurator).SetupSingletonDependency<IStubDependency>(expected);
 
             // Act
             GetSingletonTestHelper<IStubDependency>(expected: expected);
@@ -140,7 +140,7 @@
         public void CanSetAndGetConfigurationValues()
         {
             // Arrange
-            IDependencyLocator target = Dependency.Locator as IDependencyLocator;
+            IDependencyConfigurator target = Dependency.Locator as IDependencyConfigurator;
             const string key = "key";
             const string expected = "configuration value";
 
@@ -156,7 +156,7 @@
         public void CanCreateInstancesWithDerivedInstancesOfParameterTypes()
         {
             // Arrange
-            var target = Dependency.Locator as IDependencyLocator;
+            var target = Dependency.Locator as IDependencyConfigurator;
             target.SetupDependency<ConstructorableStub, IConstructorableStub>("default");
             InheritedStubDependency argument = new InheritedStubDependency
             {
@@ -175,7 +175,7 @@
         public void CanCreateInstancesWithDerivedInstancesOfTwoParameterTypes()
         {
             // Arrange
-            IDependencyLocator target = Dependency.Locator as IDependencyLocator;
+            IDependencyConfigurator target = Dependency.Locator as IDependencyConfigurator;
             target.SetupDependency<ConstructorableStub, IConstructorableStub>("default");
             InheritedStubDependency argument = new InheritedStubDependency
             {
@@ -195,7 +195,7 @@
         public void CanSetupAndRetrieveLazySingleton()
         {
             // Arrange
-            var target = Dependency.Locator as IDependencyLocator;
+            var target = Dependency.Locator as IDependencyConfigurator;
             var expected = new GenericParameterHelper(10);
 
             // Act
@@ -212,7 +212,7 @@
         public void CanSetupAndRetrieveLazyConfigValue()
         {
             // Arrange
-            var target = Dependency.Locator as IDependencyLocator;
+            var target = Dependency.Locator as IDependencyConfigurator;
             var expected = new GenericParameterHelper(10);
 
             // Act
@@ -229,7 +229,7 @@
         public void CanSetupGenericAbstractType()
         {
             // Arrange
-            var target = Dependency.Locator as IDependencyLocator;
+            var target = Dependency.Locator as IDependencyConfigurator;
             BaseGeneric<GenericParameterHelper> result;
 
             // Act
@@ -244,7 +244,7 @@
         public void CanSetupGenericInterfaceType()
         {
             // Arrange
-            var target = Dependency.Locator as IDependencyLocator;
+            var target = Dependency.Locator as IDependencyConfigurator;
             IGeneric<GenericParameterHelper> result;
 
             // Act
@@ -259,7 +259,7 @@
         public void CanSetupGenericInterfaceTypeWithParameter()
         {
             // Arrange
-            var target = Dependency.Locator as IDependencyLocator;
+            var target = Dependency.Locator as IDependencyConfigurator;
             IGeneric<GenericParameterHelper> result;
             GenericParameterHelper expected = new GenericParameterHelper(10);
 
@@ -277,7 +277,7 @@
         public void ConcreteTypeHasPriorityOverGeneric()
         {
             // Arrange
-            var target = Dependency.Locator as IDependencyLocator;
+            var target = Dependency.Locator as IDependencyConfigurator;
             IGeneric<GenericParameterHelper> result;
             GenericParameterHelper expected = new GenericParameterHelper(10);
 

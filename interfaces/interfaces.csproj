@@ -94,8 +94,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IDependencyLocator.cs" />
-    <Compile Include="IDependencyLocatorCodeContract.cs">
-      <DependentUpon>IDependencyLocator.cs</DependentUpon>
+    <Compile Include="IDependencyConfigurator.cs" />
+    <Compile Include="IDependencyConfiguratorCodeContract.cs">
+      <DependentUpon>IDependencyConfigurator.cs</DependentUpon>
     </Compile>
     <Compile Include="IDependencyProvider.cs" />
     <Compile Include="IDependencyProviderCodeContract.cs">

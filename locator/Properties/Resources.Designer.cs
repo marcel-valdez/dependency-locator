@@ -61,11 +61,29 @@ namespace DependencyLocation.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to An error ocurred during configuration, value: {0}, cannot be set for the key: {1}..
+        /// </summary>
+        internal static string AnErrorOcurredDuringConfiguration {
+            get {
+                return ResourceManager.GetString("AnErrorOcurredDuringConfiguration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to El archivo de configuracion {0} no existe.
         /// </summary>
         internal static string ConfigFileNotFound {
             get {
                 return ResourceManager.GetString("ConfigFileNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Configuration value for {0} not set..
+        /// </summary>
+        internal static string ConfigurationValueNotSetForKey {
+            get {
+                return ResourceManager.GetString("ConfigurationValueNotSetForKey", resourceCulture);
             }
         }
     }
