@@ -2,15 +2,15 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Reflection;
     using DependencyLocation;
     using Fasterflect;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using TestingTools.Extensions;   
     using TestingTools;
     using TestingTools.Core;
-    using System.Linq;
-    
+    using TestingTools.Extensions;
+
     /// <summary>
     ///This is a test class for ConstructorContainerTest and is intended
     ///to contain all ConstructorContainerTest Unit Tests
@@ -81,12 +81,11 @@
             target = new ConstructorContainer();
 
             // Assert
-            ConstructorContainer_Accessor accesor = MakeAccesor(target);
-            Verify.That(accesor.mConstructors)
+
+            Verify.That(target.GetFieldValue("mCtorsList") as IEnumerable<InterfaceConstructors>)
                 .IsNotNull()
-                .Now();
-            Verify.That(accesor.mConstructors)
-                .ItsTrueThat(coll => coll.Count == 0)
+                .And()
+                .ItsTrueThat(coll => coll.Count() == 0)
                 .Now();
         }
 
@@ -98,144 +97,68 @@
         {
             // Arrange
             ConstructorContainer target = new ConstructorContainer();
-            ConstructorInfo constructor = typeof(ConcreteStubDependency).Constructors()[0];
-            Type target1 = typeof(IStubDependency);
-            string key = "name";
+            Type cType = typeof(ConcreteStubDependency);
+            Type iType = typeof(IStubDependency);
 
             // Act
-            target.Add(constructor, target1, key);
+            target.AddInterfaceConstructors(iType, cType);
 
             // Assert
-            Verify.That(MakeAccesor(target).mConstructors)
-                .ItsTrueThat(ctors => ctors.ContainsKey(new KeyValuePair<Type, string>(target1, key)))
-                .And()
-                .ItsTrueThat(ctors => ctors[new KeyValuePair<Type, string>(target1, key)] != null)
-                .Now();
+            Verify.That(target.GetFieldValue("mCtorsList") as IEnumerable<InterfaceConstructors>)
+                  .IsTrueForAny(ctors => ctors.IsType(iType))
+                  .And()
+                  .ItsTrueThat(coll => coll.Count() == 1)
+                  .Now();
         }
 
         /// <summary>
         ///A test for GetConstructor
         ///</summary>
         [TestMethod()]
-        public void GetConstructorTest()
+        public void GetLimitsConstructorTest()
         {
             // Arrange
-            ConstructorContainer target = new ConstructorContainer(); // TODO: Initialize to an appropriate value
-            Type[] argTypes = null; // TODO: Initialize to an appropriate value
-            Type interfaceType = null; // TODO: Initialize to an appropriate value
-            string key = string.Empty; // TODO: Initialize to an appropriate value
-            ConstructorInvoker expected = null; // TODO: Initialize to an appropriate value
-            ConstructorInvoker actual;
+            ConstructorContainer target;
+            Type[] argTypes = Type.GetTypeArray(new object[] { "", 1, "" });
+            Type[] emptyTypes = Type.EmptyTypes;
+            Type[] unknownTypes = Type.GetTypeArray(new object[] { "", 1, "", 12 });
+            Type interfaceType = typeof(IStubDependency);
+            Type concreteType = typeof(ConcreteStubDependency);
+            ConstructorInvoker valid;
+            ConstructorInvoker validEmpty;
+            Func<ConstructorInvoker> lGetInvalidConstructor;
 
             // Act
-            actual = target.GetConstructor(argTypes, interfaceType, key);
+            target = new ConstructorContainer()
+                        .AddInterfaceConstructors(interfaceType, concreteType);
+            lGetInvalidConstructor = () => target.GetConstructor(unknownTypes, interfaceType);
+            valid = target.GetConstructor(argTypes, interfaceType);
+            validEmpty = target.GetConstructor(emptyTypes, interfaceType);
 
             // Assert
-            Assert.AreEqual(expected, actual);
-            Assert.Inconclusive("Verify the correctness of this test method.");
-        }
+            Verify.That(valid)
+                  .IsNotNull()
+                  .Now();
 
-        /// <summary>
-        ///A test for GetMatchingConstructor
-        ///</summary>
-        [TestMethod()]
-        [DeploymentItem("DependencyLocator.dll")]
-        public void GetMatchingConstructorTest()
-        {
-            // Arrange
-            Dictionary<Type[], ConstructorInvoker> constructors = null; // TODO: Initialize to an appropriate value
-            Type[] argTypes = null; // TODO: Initialize to an appropriate value
-            ConstructorInvoker expected = null; // TODO: Initialize to an appropriate value
-            ConstructorInvoker actual;
+            Verify.That(validEmpty)
+                  .IsNotNull()
+                  .Now();
 
-            // Act
-            actual = ConstructorContainer_Accessor.GetMatchingConstructor(constructors, argTypes);
+            Verify.That(valid("", 1, ""))
+                  .IsOfType(interfaceType, "El tipo debe ser del tipo de la interfaz definida.")
+                  .And()
+                  .IsOfType(concreteType, "El tipo debe ser del tipo de la clase concreta.")
+                  .Now();
 
-            // Assert
-            Assert.AreEqual(expected, actual);
-            Assert.Inconclusive("Verify the correctness of this test method.");
-        }
+            Verify.That(validEmpty())
+                  .IsOfType(interfaceType, "El tipo debe ser del tipo de la interfaz definida.")
+                  .And()
+                  .IsOfType(concreteType, "El tipo debe ser del tipo de la clase concreta.")
+                  .Now();
 
-        /// <summary>
-        ///A test for GetParamTypes
-        ///</summary>
-        [TestMethod()]
-        [DeploymentItem("DependencyLocator.dll")]
-        public void GetParamTypesTest()
-        {
-            // Arrange
-            ConstructorInfo constructor = null; // TODO: Initialize to an appropriate value
-            Type[] expected = null; // TODO: Initialize to an appropriate value
-            Type[] actual;
-
-            // Act
-            actual = ConstructorContainer_Accessor.GetParamTypes(constructor);
-
-            // Assert
-            Assert.AreEqual(expected, actual);
-            Assert.Inconclusive("Verify the correctness of this test method.");
-        }
-
-        /// <summary>
-        ///A test for MakePair
-        ///</summary>
-        [TestMethod()]
-        [DeploymentItem("DependencyLocator.dll")]
-        public void MakePairTest()
-        {
-            // Arrange
-            Type type = null; // TODO: Initialize to an appropriate value
-            string key = string.Empty; // TODO: Initialize to an appropriate value
-            KeyValuePair<Type, string> expected = new KeyValuePair<Type, string>(); // TODO: Initialize to an appropriate value
-            KeyValuePair<Type, string> actual;
-
-            // Act
-            actual = ConstructorContainer_Accessor.MakePair(type, key);
-
-            // Assert
-            Assert.AreEqual(expected, actual);
-            Assert.Inconclusive("Verify the correctness of this test method.");
-        }
-
-        /// <summary>
-        ///A test for Set
-        ///</summary>
-        [TestMethod()]
-        public void SetTest()
-        {
-            // Arrange
-            ConstructorContainer target = new ConstructorContainer(); // TODO: Initialize to an appropriate value
-            ConstructorInfo constructor = null; // TODO: Initialize to an appropriate value
-            Type target1 = null; // TODO: Initialize to an appropriate value
-            string key = string.Empty; // TODO: Initialize to an appropriate value
-
-            // Act
-            target.Set(constructor, target1, key);
-
-            // Assert
-            Assert.Inconclusive("A method that does not return a value cannot be verified.");
-        }
-
-        /// <summary>
-        ///A test for TrySet
-        ///</summary>
-        [TestMethod()]
-        public void TrySetTest()
-        {
-            // Arrange
-            ConstructorContainer target = new ConstructorContainer(); // TODO: Initialize to an appropriate value
-            ConstructorInfo constructor = null; // TODO: Initialize to an appropriate value
-            Type target1 = null; // TODO: Initialize to an appropriate value
-            string key = string.Empty; // TODO: Initialize to an appropriate value
-            bool expected = false; // TODO: Initialize to an appropriate value
-            bool actual;
-
-            // Act
-            actual = target.TrySet(constructor, target1, key);
-
-            // Assert
-            Assert.AreEqual(expected, actual);
-            Assert.Inconclusive("Verify the correctness of this test method.");
+            Verify.That(lGetInvalidConstructor)
+                  .ThrowsException()
+                  .Now();
         }
 
         private static ConstructorContainer_Accessor MakeAccesor(ConstructorContainer target)

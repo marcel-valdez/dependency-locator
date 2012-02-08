@@ -1,12 +1,12 @@
-﻿namespace DependencyLocation.DependencyLocation
+﻿namespace DependencyLocation
 {
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.Contracts;
     using System.Linq;
     using System.Reflection;
-    using System.Text;
-    using CommonUtilities.Reflection;
+    using Reflection;
+    using Extensions;
     using Fasterflect;
 
     /// <summary>
@@ -17,7 +17,6 @@
     {
         private readonly Type mInterfaceType;
         private readonly Dictionary<Type[], ConstructorInvoker> mConstructors;
-        private Type mConcreteType;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="InterfaceConstructors"/> class.
@@ -34,22 +33,23 @@
         /// Sets the concrete implementation of the interface
         /// </summary>
         /// <typeparam name="T">Concrete type of the interface implementation</typeparam>
-        public void SetConcrete<T>()
+        public InterfaceConstructors SetConcrete<T>()
         {
             Contract.Requires(this.GetInterface().IsAssignableFrom(typeof(T)));
-            this.SetConcrete(typeof(T));
+            Contract.Ensures(Contract.Result<InterfaceConstructors>() == this);
+            return this.SetConcrete(typeof(T));
         }
 
         /// <summary>
         /// Sets the concrete implementation of the interface
         /// </summary>
         /// <param name="concreteType">Concrete type of the interface implementation</param>
-        public void SetConcrete(Type concreteType)
+        public InterfaceConstructors SetConcrete(Type concreteType)
         {
             Contract.Requires(this.GetInterface().IsAssignableFrom(concreteType));
-            this.mConcreteType = concreteType;
-            this.ClearConstructors();
-            this.DefineConstructors();
+            Contract.Ensures(Contract.Result<InterfaceConstructors>() == this);
+            return this.ClearConstructors()
+                       .DefineConstructors(concreteType);
         }
 
         /// <summary>
@@ -95,7 +95,12 @@
         /// <returns>true if successful, false otherwise</returns>
         public bool TryGetConstructor(out ConstructorInvoker ctor, params Type[] parameterTypes)
         {
-            throw new NotImplementedException();
+            Contract.Requires(parameterTypes != null);
+
+            ctor = this.mConstructors.FirstOrDefault(current => current.Key.EqualsTo(parameterTypes)).Value ??
+                   this.mConstructors.FirstOrDefault(current => current.Key.IsAssignableFrom(parameterTypes)).Value;
+
+            return ctor != null;
         }
 
         /// <summary>
@@ -106,72 +111,97 @@
         /// <returns></returns>
         public bool TryGetConstructor(out ConstructorInvoker ctor, params object[] parameters)
         {
-            throw new NotImplementedException();
-        }
-
-        private void DefineConstructors()
-        {
-
-        }
-
-        private void ClearConstructors()
-        {
-
+            Contract.Requires(parameters != null);
+            return this.TryGetConstructor(out ctor, parameters.Length == 0 ? Type.EmptyTypes : Type.GetTypeArray(parameters));
         }
 
         /// <summary>
-        /// Gets the parameter types of a constructor.
+        /// Defines and stores in memory the constructors for the type concreteType.
         /// </summary>
-        /// <param name="constructor">The constructor.</param>
-        /// <returns>The parameter types</returns>
-        private static Type[] GetParamTypes(ConstructorInfo constructor)
+        private InterfaceConstructors DefineConstructors(Type concreteType)
         {
-            Contract.Requires(constructor != null);
-            Contract.Ensures(Contract.Result<Type[]>() != null);
-
-            Type[] types = constructor.GetParameters()
-                                    .Select(info => info.ParameterType)
-                                    .ToArray();
-
-            if (types == null || types.Length == 0)
+            Contract.Requires(concreteType != null);
+            Contract.Requires(!concreteType.IsAbstract, "Concrete type can't be abstract.");
+            Contract.Ensures(Contract.Result<InterfaceConstructors>() == this);
+            foreach (ConstructorInfo ctor in concreteType.GetConstructors())
             {
-                types = Type.EmptyTypes;
+                this.AddConstructor(ctor);
             }
 
-            return types;
+            return this;
         }
 
         /// <summary>
-        /// Matches the types.
+        /// Clears the constructors.
         /// </summary>
-        /// <param name="constructors">The constructors.</param>
-        /// <param name="argTypes">The arg types.</param>
-        /// <returns>ConstructorInvoker that matches the <paramref name="argTypes"/></returns>
-        private ConstructorInvoker GetMatchingConstructor(Type[] argTypes)
+        private InterfaceConstructors ClearConstructors()
         {
-            Contract.Requires(argTypes != null, "argumentTypes is null or empty.");
-            Contract.Ensures(Contract.Result<ConstructorInvoker>() != null);
+            Contract.Ensures(Contract.Result<InterfaceConstructors>() == this);
+            this.mConstructors.Clear();
+            return this;
+        }
 
-            Type[] ctorArgsTypes =
-                            this.mConstructors.Keys
-                            .Where(
-                            (types) =>
-                            {
-                                // First match the amount of arguments
-                                bool match = types.Length == argTypes.Length;
-                                if (match)
-                                {
-                                    for (int i = 0; match && i < argTypes.Length; i++)
-                                    {
-                                        // Now match each argument
-                                        match = types[i].IsAssignableFrom(argTypes[i]);
-                                    }
-                                }
+        /// <summary>
+        /// Adds the constructor.
+        /// </summary>
+        /// <param name="constructor">The constructor.</param>
+        /// <param name="target">The target.</param>
+        /// <param name="key">The key.</param>
+        private InterfaceConstructors AddConstructor(ConstructorInfo constructor)
+        {
+            Contract.Requires(constructor != null);
+            Contract.Ensures(Contract.Result<InterfaceConstructors>() == this);
 
-                                return match;
-                            }).First();
+            Type[] lParamTypes = constructor.GetParamTypes();
+            if (lParamTypes.Length == 0)
+            {
+                lParamTypes = Type.EmptyTypes;
+            }
 
-            return this.mConstructors[ctorArgsTypes];
+            ConstructorInvoker lInvoker = null;
+            lInvoker = constructor.DelegateForCreateInstance();
+            this.mConstructors.Add(lParamTypes, lInvoker);
+            return this;
+        }
+
+        /// <summary>
+        /// Determines whether the specified <see cref="System.Object"/> is equal to this instance.
+        /// </summary>
+        /// <param name="other">The <see cref="System.Object"/> to compare with this instance.</param>
+        /// <returns>
+        ///   <c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c>.
+        /// </returns>
+        public override bool Equals(object other)
+        {
+            bool lEquals = true;
+            if (!base.Equals(other))
+            {
+                if (other as InterfaceConstructors != null)
+                {
+                    Dictionary<Type[], ConstructorInvoker> lOtherCtors = (other as InterfaceConstructors).mConstructors;
+                    lEquals = this.mConstructors.Count == lOtherCtors.Count;
+                    TypeArrayComparer comparer = new TypeArrayComparer();
+                    for (int i = 0; lEquals && i < this.mConstructors.Count; i++)
+                    {
+                        Type[] xKey = this.mConstructors.Keys.ElementAt(i);
+                        Type[] yKey = lOtherCtors.Keys.ElementAt(i);
+                        lEquals = comparer.Equals(xKey, yKey);
+                    }
+                }
+            }
+
+            return lEquals;
+        }
+
+        /// <summary>
+        /// Returns a hash code for this instance.
+        /// </summary>
+        /// <returns>
+        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
+        /// </returns>
+        public override int GetHashCode()
+        {
+            return this.GetInterface().GetHashCode() * 7;
         }
     }
 

@@ -3,7 +3,7 @@
 //     Copyright Route Manager de México(c) 2011. All rights reserved.
 // </copyright>
 // ------------------------------------------------------------------------
-namespace CommonUtilities
+namespace DependencyLocation.Extensions
 {
     using System;
 

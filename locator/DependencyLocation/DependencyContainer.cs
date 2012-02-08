@@ -11,7 +11,8 @@ namespace DependencyLocation
     using System.Diagnostics.Contracts;
     using System.Linq;
     using System.Reflection;
-    using CommonUtilities.Reflection;
+    using Extensions;
+    using Reflection;
     using Fasterflect;
 
     /// <summary>

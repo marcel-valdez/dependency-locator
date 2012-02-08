@@ -3,11 +3,12 @@
 //     Copyright Route Manager de México(c) 2011. All rights reserved.
 // </copyright>
 // ------------------------------------------------------------------------
-namespace CommonUtilities.Reflection
+namespace DependencyLocation.Reflection
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Extensions;
 
     /// <summary>
     /// Clase utilizada para comparar 2 arreglos de tipos.

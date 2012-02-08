@@ -4,101 +4,35 @@
     using System.Collections.Generic;
     using System.Configuration;
     using System.Diagnostics.Contracts;
-    using Fasterflect;
     using System.Linq;
-    using CommonUtilities.Reflection;
     using System.Reflection;
+    using System.Text;
+    using Extensions;
+    using Fasterflect;
 
     /// <summary>
     /// Esta clase esta encargada de contener y proveer acceso a constructores de instancias
     /// </summary>
     internal class ConstructorContainer
     {
-        private readonly Dictionary<KeyValuePair<Type, string>, Dictionary<Type[], ConstructorInvoker>> mConstructors =
-                                    new Dictionary<KeyValuePair<Type, string>, Dictionary<Type[], ConstructorInvoker>>();
+        private readonly IList<InterfaceConstructors> mCtorsList =
+                                    new List<InterfaceConstructors>();
 
         /// <summary>
-        /// Adds the specified constructor.
+        /// Adds the interface constructors, using the signature of the constructors of the concrete type.
         /// </summary>
-        /// <param name="constructor">The constructor.</param>
-        /// <param name="target">The target type to manifest.</param>
-        /// <param name="key">The key.</param>
-        public void Add(ConstructorInfo constructor, Type target, string key)
+        /// <param name="interfaceType">Type of the interface.</param>
+        /// <param name="concreteType">Type of the concrete.</param>
+        /// <returns>Itself</returns>
+        public ConstructorContainer AddInterfaceConstructors(Type interfaceType, Type concreteType)
         {
-            Contract.Requires(target != null);
-            Contract.Requires(constructor != null);
-            Contract.Requires(key != null);
+            Contract.Requires(interfaceType != null, "interfaceType is null.");
+            Contract.Requires(concreteType != null, "concreteType is null.");
 
-            Dictionary<Type[], ConstructorInvoker> constructors = null;
-            if (!this.mConstructors.TryGetValue(MakePair(target, key), out constructors))
-            {
-                constructors = new Dictionary<Type[], ConstructorInvoker>(new TypeArrayComparer());
-                this.mConstructors.Add(
-                    MakePair(target, key),
-                    constructors);
-            }
+            this.mCtorsList.Add(new InterfaceConstructors(interfaceType)
+                            .SetConcrete(concreteType));
 
-            Type[] paramTypes = GetParamTypes(constructor);
-
-            if (paramTypes.Length == 0)
-            {
-                paramTypes = Type.EmptyTypes;
-            }
-
-            ConstructorInvoker invoker = null;
-
-            if (!constructors.TryGetValue(paramTypes, out invoker))
-            {
-                invoker = constructor.DelegateForCreateInstance();
-                constructors.Add(paramTypes, invoker);
-            }
-        }
-
-        /// <summary>
-        /// Sets the specified constructor for the target type and key.
-        /// </summary>
-        /// <param name="constructor">The constructor.</param>
-        /// <param name="target">The target.</param>
-        /// <param name="key">The key.</param>
-        public void Set(ConstructorInfo constructor, Type target, string key)
-        {
-            Contract.Requires(target != null);
-            Contract.Requires(constructor != null);
-            Contract.Requires(key != null);
-
-            Type[] paramTypes = GetParamTypes(constructor);
-            KeyValuePair<Type, string> pair = MakePair(target, key);
-            var invoker = constructor.DelegateForCreateInstance();
-            this.mConstructors[pair][paramTypes] = invoker;
-        }
-
-        /// <summary>
-        /// Tries to set the constructor for target type and key
-        /// </summary>
-        /// <param name="constructor">The constructor.</param>
-        /// <param name="target">The target.</param>
-        /// <param name="key">The key.</param>
-        /// <returns>True if the target type and key have already been set (and was modified), false otherwise.</returns>
-        public bool TrySet(ConstructorInfo constructor, Type target, string key)
-        {
-            Contract.Requires(target != null);
-            Contract.Requires(constructor != null);
-            Contract.Requires(key != null);
-
-            bool success = true;
-            Type[] paramTypes = GetParamTypes(constructor);
-            KeyValuePair<Type, string> pair = MakePair(target, key);
-            var invoker = constructor.DelegateForCreateInstance();
-            try
-            {
-                this.mConstructors[pair][paramTypes] = invoker;
-            }
-            catch (KeyNotFoundException)
-            {
-                success = false;
-            }
-
-            return success;
+            return this;
         }
 
         /// <summary>
@@ -108,61 +42,20 @@
         /// <param name="interfaceType">Type of the interface.</param>
         /// <param name="key">The key.</param>
         /// <returns>The callable constructor delegate</returns>
-        public ConstructorInvoker GetConstructor(Type[] argTypes, Type interfaceType, string key)
+        public ConstructorInvoker GetConstructor(Type[] argTypes, Type interfaceType)
         {
             Contract.Requires(argTypes != null, "argTypes is null.");
             Contract.Requires(interfaceType != null, "interfaceType is null.");
-            Contract.Requires(!String.IsNullOrEmpty(key), "key is null or empty.");
 
-            Dictionary<Type[], ConstructorInvoker> interfaceConstructors = null;
-            if (!this.mConstructors.TryGetValue(MakePair(interfaceType, key), out interfaceConstructors) && interfaceConstructors != null)
+            InterfaceConstructors ctors = this.mCtorsList.FirstOrDefault(cCtors => cCtors.IsType(interfaceType));
+            if (ctors != null)
             {
-                return GetMatchingConstructor(interfaceConstructors, argTypes);
-            }
-            else
-            {
-                throw new KeyNotFoundException();
-            }
-        }
-
-        /// <summary>
-        /// Gets the pair.
-        /// </summary>
-        /// <param name="type">The type.</param>
-        /// <param name="key">The key.</param>
-        /// <returns>Generated KeyValuePair</returns>
-        private static KeyValuePair<Type, string> MakePair(Type type, string key)
-        {
-            Contract.Requires(type != null, "type is null.");
-            Contract.Requires(key != null, "key is null.");
-            Contract.Ensures(
-                Contract.Result<KeyValuePair<Type, string>>().Key == type &&  
-                Contract.Result<KeyValuePair<Type, string>>().Value == key);
-
-            return new KeyValuePair<Type, string>(type, key);
-        }
-
-        /// <summary>
-        /// Gets the parameter types of a constructor.
-        /// </summary>
-        /// <param name="constructor">The constructor.</param>
-        /// <returns>The parameter types</returns>
-        private static Type[] GetParamTypes(ConstructorInfo constructor)
-        {
-            Contract.Requires(constructor != null);
-            Contract.Ensures(Contract.Result<Type[]>() != null);
-
-            Type[] types = constructor.GetParameters()
-                                    .Select(info => info.ParameterType)
-                                    .ToArray();
-
-            if (types == null || types.Length == 0)
-            {
-                types = Type.EmptyTypes;
+                return GetMatchingConstructor(ctors, argTypes);
             }
 
-            return types;
+            throw new KeyNotFoundException(string.Format("No esta registrado el tipo de interfaz {0}.", interfaceType.ToString()));
         }
+
 
         /// <summary>
         /// Matches the types.
@@ -170,32 +63,54 @@
         /// <param name="constructors">The constructors.</param>
         /// <param name="argTypes">The arg types.</param>
         /// <returns>ConstructorInvoker that matches the <paramref name="argTypes"/></returns>
-        private static ConstructorInvoker GetMatchingConstructor(Dictionary<Type[], ConstructorInvoker> constructors, Type[] argTypes)
+        private static ConstructorInvoker GetMatchingConstructor(InterfaceConstructors constructors, Type[] argTypes)
         {
             Contract.Requires(constructors != null, "constructors is null.");
             Contract.Requires(argTypes != null, "argumentTypes is null or empty.");
             Contract.Ensures(Contract.Result<ConstructorInvoker>() != null);
 
-            Type[] ctorArgsTypes =
-                            constructors.Keys
-                            .Where(
-                            (types) =>
-                            {
-                                // First match the amount of arguments
-                                bool match = types.Length == argTypes.Length;
-                                if (match)
-                                {
-                                    for (int i = 0; match && i < argTypes.Length; i++)
-                                    {
-                                        // Now match each argument
-                                        match = types[i].IsAssignableFrom(argTypes[i]);
-                                    }
-                                }
+            ConstructorInvoker ctor;
+            if (!constructors.TryGetConstructor(out ctor, argTypes))
+            {
+                throw new KeyNotFoundException(MakeErrorMsg(constructors, argTypes));
+            }
 
-                                return match;
-                            }).First();
-
-            return constructors[ctorArgsTypes];
+            return ctor;
         }
+
+        /// <summary>
+        /// Makes the error message.
+        /// </summary>
+        /// <param name="constructors">The constructors.</param>
+        /// <param name="argTypes">The arg types.</param>
+        /// <returns>The error message</returns>
+        private static string MakeErrorMsg(InterfaceConstructors constructors, Type[] argTypes)
+        {
+            Contract.Requires(constructors != null, "constructors is null.");
+            Contract.Requires(argTypes != null, "argTypes is null or empty.");
+            Contract.Ensures(!String.IsNullOrEmpty(Contract.Result<string>()));
+
+            StringBuilder lParamTypesMsgBuilder = new StringBuilder();
+            lParamTypesMsgBuilder.Append("Un constructor para el tipo {0} con los parámetros: ");
+            object[] msgObjects = new object[argTypes.Length + 1];
+            msgObjects[0] = constructors.GetInterface();
+            if (argTypes.Length == 0)
+            {
+                lParamTypesMsgBuilder.Append("Sin parámetros, ");
+            }
+            else
+            {
+                for (int i = 0; i < argTypes.Length; i++)
+                {
+                    msgObjects[i + 1] = argTypes[i];
+                    lParamTypesMsgBuilder.Append("{" + (i + 1) + "}, ");
+                }
+            }
+
+            lParamTypesMsgBuilder.Append("no existe.");
+
+            return string.Format(lParamTypesMsgBuilder.ToString(), msgObjects);
+        }
+
     }
 }
