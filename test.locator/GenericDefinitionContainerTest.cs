@@ -109,7 +109,7 @@
         ///A test for CanMake
         ///</summary>
         [TestMethod()]
-        public void CanMakeValidTest1()
+        public void CanMakeInvalidTest4()
         {
             // Arrange
             Type genericDefinition = typeof(IGeneric<>);
@@ -122,7 +122,7 @@
             actual = target.CanMake(generic);
 
             // Assert
-            Verify.That(actual).IsTrue("Debe responder verdadero cuando se trata de un tipo abstracto"
+            Verify.That(actual).IsFalse("Debe responder false cuando se trata de un tipo abstracto"
                                      + "\n que es una instancia de la definición de tipo genérico"
                                      + "\n y del cuál deriva el tipo concreto con constructor.").Now();
         }
@@ -131,7 +131,7 @@
         ///A test for CanMake
         ///</summary>
         [TestMethod()]
-        public void CanMakeInValidTest()
+        public void CanMakeInvalidTest()
         {
             // Arrange
             Type genericDefinition = typeof(IGeneric<>);
@@ -154,7 +154,7 @@
         ///A test for CanMake
         ///</summary>
         [TestMethod()]
-        public void CanMakeInValidTest1()
+        public void CanMakeInvalidTest1()
         {
             // Arrange
             Type genericDefinition = typeof(IGeneric<>);

@@ -70,7 +70,9 @@
             Contract.Ensures(Contract.Result<InterfaceConstructors>() != null);
             Contract.Ensures(Contract.Result<InterfaceConstructors>().GetInterface().Equals(generic));
 
-            throw new NotImplementedException();
+            Type concreteGeneric = this.mConcreteGenericDefinition.MakeGenericType(generic.GetGenericArguments());
+            return new InterfaceConstructors(generic)
+                        .SetConcrete(concreteGeneric);
         }
 
         /// <summary>
@@ -84,7 +86,11 @@
             Contract.Ensures(Contract.Result<InterfaceConstructors<T>>() != null);
             Contract.Ensures(Contract.Result<InterfaceConstructors<T>>().GetInterface().Equals(typeof(T)));
 
-            throw new NotImplementedException();
+            Type concreteGeneric = this.mConcreteGenericDefinition.MakeGenericType(typeof(T).GetGenericArguments());
+            var result = new InterfaceConstructors<T>();
+            result.SetConcrete(concreteGeneric);
+
+            return result;
         }
 
         /// <summary>
