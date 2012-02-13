@@ -1,0 +1,35 @@
+/**
+ * Necesidad:
+ **/
+// Se requiere un contenedor de definiciones de tipos genéricos, aquellos tipos de objetos que contienen uno o más tipos genéricos en su definición; por ejemplo: IClass<T, T1, T2>
+
+/**
+ * Detalles:
+ **/
+//	Riesgos
+//		Un tipo de objeto posiblemente problemático sería: 
+//		Asumiendo una interfaz:
+	interface IClass<T, T1, T2> { ... }
+//		Entonces se define una clase:
+	class Class<T1, T2> : IClass<string, T1, T2> { ... }
+//		No es posible hacer lo siguiente: typeof(IClass<string,,>), por lo tanto este riesgo no existe.
+
+/**
+ * Forma de uso:
+ **/
+// Asumiendo que existe la clase
+	class Class<T, T1, T2> : IClass<T, T1, T2> { .. }
+// y la interfaz
+	interface IClass<T, T1, T2> { .. }
+// Entonces se usaría así:
+	var lGenericContainer = new GenericDefinitionContainer(typeof(IClass<,,>))
+							.SetConcrete(typeof(Class<,,>)); 
+							// Se va necesitar registrar el tipo Class<,,> para comparar al tipo a construir, en base al tipo concreto, no la interfaz:
+	// ...
+	InterfaceConstructors lCtorContainer = null;
+	Type lTypeToMake = typeof(IClass<string, object, object>);
+	if(lGenericContainer.CanMake(lTypeToMake)) {
+		lCtorContainer = lGenericContainer.MakeConstructorContainer(lTypeToMake);
+	}
+	// También: 
+	Type lGenericTypeDefinition = this.mGenericContainer.GetGenericDefinition();

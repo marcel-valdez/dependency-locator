@@ -1,0 +1,21 @@
+/*
+* Tiene la responsabilidad de guardar una relación de una definición
+* de tipo genérico con un tipo concreto que la implementa.
+*/
+class GenericDefinitionContainer
+{
+	// Crea una nueva instancia de GenericDefinitionsContainer
+	public GenericDefinitionContainer(Type genericDefiniton);
+	
+	// Define el tipo concreto con el cuál crear las instancias
+	public GenericDefinitionContainer SetConcrete(Type concrete);
+	
+	// Determina si este contenedor puede crear instancias del tipo generic
+	public bool CanMake(Type generic);
+	
+	// Crea un contenedor de constructores de un tipo específico genérico
+	public InterfaceConstructors MakeConstructorContainer(Type generic);
+	
+	// Obtiene la definición genérica de la cuál se crean implementaciones
+	public Type GetGenericDefinition();
+}

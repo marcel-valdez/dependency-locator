@@ -69,8 +69,8 @@
             Contract.Requires(argTypes != null, "argumentTypes is null or empty.");
             Contract.Ensures(Contract.Result<ConstructorInvoker>() != null);
 
-            ConstructorInvoker ctor;
-            if (!constructors.TryGetConstructor(out ctor, argTypes))
+            ConstructorInvoker ctor = null;
+            if (!constructors.TryGetConstructor(out ctor, argTypes) || ctor == null)
             {
                 throw new KeyNotFoundException(MakeErrorMsg(constructors, argTypes));
             }

@@ -3,11 +3,9 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Reflection;
     using DependencyLocation;
     using Fasterflect;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using TestingTools;
     using TestingTools.Core;
     using TestingTools.Extensions;
 
@@ -69,7 +67,7 @@
 
 
         /// <summary>
-        ///A test for ConstructorContainer Constructor
+        /// A test for ConstructorContainer Constructor
         ///</summary>
         [TestMethod()]
         public void ConstructorContainerConstructorTest()
@@ -81,16 +79,15 @@
             target = new ConstructorContainer();
 
             // Assert
-
             Verify.That(target.GetFieldValue("mCtorsList") as IEnumerable<InterfaceConstructors>)
-                .IsNotNull()
-                .And()
-                .ItsTrueThat(coll => coll.Count() == 0)
-                .Now();
+                  .IsNotNull()
+                  .And()
+                  .ItsTrueThat(coll => coll.Count() == 0)
+                  .Now();
         }
 
         /// <summary>
-        ///A test for Add
+        /// A test for Add
         ///</summary>
         [TestMethod()]
         public void AddTest()
