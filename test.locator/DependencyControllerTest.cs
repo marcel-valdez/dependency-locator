@@ -7,7 +7,8 @@ using DependencyLocation;
 
 namespace Test.Locator
 {
-    [TestClass]
+    //[Ignore]
+    //[TestClass]
     public class DependencyControllerTest : DependencyLocatorTest
     {
         private static DependencyController controller = new DependencyController();

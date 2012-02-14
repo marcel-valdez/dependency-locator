@@ -43,7 +43,7 @@ namespace DependencyLocation.Setup
         {
             DependencyConfiguration configSection = GetConfigSection(configfilepath);
             string defaultKey = configSection.DefaultKey;
-            DependencyContainer injector = Dependency.Locator as DependencyContainer;
+            DependencyController injector = Dependency.Locator as DependencyController;
 
             injector.DefaultKey = defaultKey;
 

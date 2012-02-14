@@ -93,7 +93,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DependencyLocation\DependencyContainer.cs" />
     <Compile Include="DependencyLocation\Containers\ConstructorContainer.cs" />
     <Compile Include="DependencyLocation\DependencyController.cs" />
     <Compile Include="DependencyLocation\Containers\GenericDefinitionContainer.cs" />

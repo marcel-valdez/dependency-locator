@@ -9,7 +9,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "test.locator", "test.locato
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestAssembly", "testassembly\TestAssembly.csproj", "{C2CA28D0-A37A-4F35-A9D6-6BB20E0E1BD9}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{73B7D92D-AAAF-44EF-936A-DC753079BEEA}"
+	ProjectSection(SolutionItems) = preProject
+		dependency-locator.vsmdi = dependency-locator.vsmdi
+		test.locator.testsettings = test.locator.testsettings
+	EndProjectSection
+EndProject
 Global
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = dependency-locator.vsmdi
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
