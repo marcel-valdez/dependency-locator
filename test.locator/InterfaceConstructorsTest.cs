@@ -6,6 +6,7 @@
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using TestingTools.Core;
     using TestingTools.Extensions;
+    using DependencyLocation.Containers;
 
     /// <summary>
     ///This is a test class for InterfaceConstructorsTest and is intended
@@ -71,10 +72,10 @@
         {
             // Arrange
             Type interfaceType = typeof(IStubDependency);
-            InterfaceConstructors target;
+            InterfaceConstructorsContainer target;
 
             // Act
-            target = new InterfaceConstructors(interfaceType);
+            target = new InterfaceConstructorsContainer(interfaceType);
 
             // Assert
             Verify.That(target.GetInterface())
@@ -91,14 +92,14 @@
         {
             // Arrange
             Type interfaceType = typeof(IStubDependency);
-            InterfaceConstructors target;
+            InterfaceConstructorsContainer target;
             Type unequalType = typeof(IDisposable);
             Type equalType = typeof(IStubDependency);
             bool unequal;
             bool equal;
 
             // Act
-            target = new InterfaceConstructors(interfaceType);
+            target = new InterfaceConstructorsContainer(interfaceType);
             unequal = target.IsType(unequalType);
             equal = target.IsType(equalType);
 
@@ -114,11 +115,11 @@
         {
             // Arrange
             Type interfaceType = typeof(TInterface);
-            InterfaceConstructors target;
+            InterfaceConstructorsContainer target;
             bool actual;
 
             // Act
-             target = new InterfaceConstructors(interfaceType);
+            target = new InterfaceConstructorsContainer(interfaceType);
             actual = target.IsType<TCheck>();
 
             // Assert
@@ -140,10 +141,10 @@
         {
             // Arrange
             Type interfaceType = typeof(TInterface);
-            InterfaceConstructors target;
+            InterfaceConstructorsContainer target;
 
             // Act
-            target = new InterfaceConstructors(interfaceType)
+            target = new InterfaceConstructorsContainer(interfaceType)
                     .SetConcrete<TConcrete>();
 
             // Assert
@@ -160,7 +161,7 @@
         {
             // Arrange
             Type interfaceType = typeof(IStubDependency);
-            InterfaceConstructors target;
+            InterfaceConstructorsContainer target;
             ConstructorInvoker ctor1 = null;
             ConstructorInvoker ctor2 = null;
             ConstructorInvoker ctor3 = null;
@@ -172,7 +173,7 @@
             bool nonexisting;
 
             // Act
-            target = new InterfaceConstructors(interfaceType)
+            target = new InterfaceConstructorsContainer(interfaceType)
                     .SetConcrete<ConcreteStubDependency>();
             existing1 = target.TryGetConstructor(out ctor1, emptyParams);
             existing2 = target.TryGetConstructor(out ctor2, existingParams);
@@ -207,7 +208,7 @@
         {
             // Arrange
             Type interfaceType = typeof(IStubDependency);
-            InterfaceConstructors target;
+            InterfaceConstructorsContainer target;
             ConstructorInvoker ctor1 = null;
             ConstructorInvoker ctor2 = null;
             ConstructorInvoker ctor3 = null;
@@ -219,7 +220,7 @@
             bool nonexisting;
 
             // Act
-            target = new InterfaceConstructors(interfaceType)
+            target = new InterfaceConstructorsContainer(interfaceType)
                     .SetConcrete<ConcreteStubDependency>();
             existing1 = target.TryGetConstructor(out ctor1, emptyParams);
             existing2 = target.TryGetConstructor(out ctor2, existingParams);
@@ -255,7 +256,7 @@
         {
             // Arrange
             Type interfaceType = typeof(IConstructorableStub);
-            InterfaceConstructors target;
+            InterfaceConstructorsContainer target;
             ConstructorInvoker ctorBase = null;
             ConstructorInvoker ctorConcrete = null;
 
@@ -266,7 +267,7 @@
             bool existingConcrete;
 
             // Act
-            target = new InterfaceConstructors(interfaceType)
+            target = new InterfaceConstructorsContainer(interfaceType)
                         .SetConcrete<ConstructorableStub>();
             existingBase = target.TryGetConstructor(out ctorBase, baseParam);
             existingConcrete = target.TryGetConstructor(out ctorConcrete, concreteParam);

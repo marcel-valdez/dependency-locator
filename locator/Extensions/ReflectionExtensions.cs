@@ -4,6 +4,7 @@
     using System.Diagnostics.Contracts;
     using System.Linq;
     using System.Reflection;
+    using System.Collections.Generic;
 
     public static class ReflectionExtensions
     {
@@ -62,6 +63,47 @@
             }
 
             return types;
+        }
+
+        public static TValue TryGetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key)
+            where TValue: new()
+        {
+            TValue value;
+            if (!dictionary.TryGetValue(key, out value))
+            {
+                value = new TValue();
+                dictionary.Add(key, value);
+            }
+
+            return value;
+        }
+
+        public static TValue TrySetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue value)
+        {
+            TValue lPastValue = default(TValue);
+            if (!dictionary.TryGetValue(key, out lPastValue))
+            {
+                dictionary.Add(key, value);
+            }
+            else
+            {
+                dictionary[key] = value;
+            }
+
+            return lPastValue;
+        }
+
+        public static T LookupPair<T>(this IDictionary<KeyValuePair<Type, string>, object> dict, Type type, string key)
+            where T : class
+        {
+            Contract.Requires(dict != null, "dict is null.");
+            Contract.Requires(type != null, "type is null.");
+            Contract.Requires(key != null, "key is null.");
+            Contract.Ensures(Contract.Result<T>() != null);
+
+            var pair = new KeyValuePair<Type, string>(type, key);
+            object result = dict[pair];
+            return result as Lazy<T> != null ? ((Lazy<T>)result).Value : (T)result;
         }
     }
 }

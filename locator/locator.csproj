@@ -94,9 +94,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DependencyLocation\DependencyContainer.cs" />
-    <Compile Include="DependencyLocation\ConstructorContainer.cs" />
-    <Compile Include="DependencyLocation\GenericDefinitionContainer.cs" />
-    <Compile Include="DependencyLocation\InterfaceConstructors.cs" />
+    <Compile Include="DependencyLocation\Containers\ConstructorContainer.cs" />
+    <Compile Include="DependencyLocation\DependencyController.cs" />
+    <Compile Include="DependencyLocation\Containers\GenericDefinitionContainer.cs" />
+    <Compile Include="DependencyLocation\Containers\InterfaceConstructorsContainer.cs" />
     <Compile Include="Extensions\ReflectionExtensions.cs" />
     <Compile Include="DependencyLocation\Dependency.cs" />
     <Compile Include="DependencyLocation\Configuration\DependencyCollection.cs" />

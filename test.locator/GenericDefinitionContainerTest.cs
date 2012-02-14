@@ -6,7 +6,7 @@
     using TestingTools.Core;
     using TestingTools.Extensions;
     using Fasterflect;
-
+    using DependencyLocation.Containers;
 
     /// <summary>
     ///This is a test class for GenericDefinitionContainerTest and is intended
@@ -253,17 +253,13 @@
             GenericDefinitionContainer target = new GenericDefinitionContainer(genericDefinition)
                                                 .SetConcrete(typeof(Generic<>));
             Type generic = typeof(IGeneric<object>);
-            InterfaceConstructors actual;
-
+            ConstructorContainer container = new ConstructorContainer();
             // Act
-            actual = target.MakeInterfaceConstructors(generic);
+            target.AddInterfaceConstructors(generic, container);
 
             // Assert
-            Verify.That(actual)
-                  .IsNotNull()
-                  .And()
-                  .ItsTrueThat(t => t.IsType(generic))
-                  .Now();
+            Verify.That(container.GetConstructor(Type.EmptyTypes, typeof(IGeneric<object>)))
+                  .IsNotNull();
         }
                 
         /// <summary>
@@ -277,10 +273,9 @@
             GenericDefinitionContainer target = new GenericDefinitionContainer(genericDefinition)
                                                 .SetConcrete(typeof(Generic<>));
             Type generic = typeof(IEquatable<object>);
-            InterfaceConstructors actual;
 
             // Act
-            Action action = () => actual = target.MakeInterfaceConstructors(generic);
+            Action action = () => target.AddInterfaceConstructors(generic, new ConstructorContainer());
 
             // Assert
             Verify.That(action)
@@ -299,10 +294,9 @@
             GenericDefinitionContainer target = new GenericDefinitionContainer(genericDefinition)
                                                 .SetConcrete(typeof(Generic<>));
             Type generic = typeof(Generic<object>);
-            InterfaceConstructors actual;
 
             // Act
-            Action action = () => actual = target.MakeInterfaceConstructors(generic);
+            Action action = () => target.AddInterfaceConstructors(generic, new ConstructorContainer());
 
             // Assert
             Verify.That(action)

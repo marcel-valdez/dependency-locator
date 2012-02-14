@@ -113,6 +113,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConstructorContainerTest.cs" />
+    <Compile Include="DependencyControllerTest.cs" />
     <Compile Include="GenericDefinitionContainerTest.cs" />
     <Compile Include="InterfaceConstructorsTest.cs" />
     <Compile Include="Stubs\CompetingGeneric.cs" />

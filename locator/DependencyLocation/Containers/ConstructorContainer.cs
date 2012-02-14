@@ -1,4 +1,4 @@
-﻿namespace DependencyLocation
+﻿namespace DependencyLocation.Containers
 {
     using System;
     using System.Collections.Generic;
@@ -15,8 +15,8 @@
     /// </summary>
     internal class ConstructorContainer
     {
-        private readonly IList<InterfaceConstructors> mCtorsList =
-                                    new List<InterfaceConstructors>();
+        private readonly IList<InterfaceConstructorsContainer> mCtorsList =
+                                    new List<InterfaceConstructorsContainer>();
 
         /// <summary>
         /// Adds the interface constructors, using the signature of the constructors of the concrete type.
@@ -29,7 +29,7 @@
             Contract.Requires(interfaceType != null, "interfaceType is null.");
             Contract.Requires(concreteType != null, "concreteType is null.");
 
-            this.mCtorsList.Add(new InterfaceConstructors(interfaceType)
+            this.mCtorsList.Add(new InterfaceConstructorsContainer(interfaceType)
                             .SetConcrete(concreteType));
 
             return this;
@@ -47,7 +47,7 @@
             Contract.Requires(argTypes != null, "argTypes is null.");
             Contract.Requires(interfaceType != null, "interfaceType is null.");
 
-            InterfaceConstructors ctors = this.mCtorsList.FirstOrDefault(cCtors => cCtors.IsType(interfaceType));
+            InterfaceConstructorsContainer ctors = this.mCtorsList.FirstOrDefault(cCtors => cCtors.IsType(interfaceType));
             if (ctors != null)
             {
                 return GetMatchingConstructor(ctors, argTypes);
@@ -56,6 +56,18 @@
             throw new KeyNotFoundException(string.Format("No esta registrado el tipo de interfaz {0}.", interfaceType.ToString()));
         }
 
+        /// <summary>
+        /// Determines whether the specified interface type has been registered.
+        /// </summary>
+        /// <param name="interfaceType">Type of the interface.</param>
+        /// <returns>
+        ///   <c>true</c> if the specified interface type has been registered; otherwise, <c>false</c>.
+        /// </returns>
+        public bool HasRegistered(Type interfaceType)
+        {
+            Contract.Requires(interfaceType != null);
+            return this.mCtorsList.Any(cCtors => cCtors.IsType(interfaceType));
+        }
 
         /// <summary>
         /// Matches the types.
@@ -63,7 +75,7 @@
         /// <param name="constructors">The constructors.</param>
         /// <param name="argTypes">The arg types.</param>
         /// <returns>ConstructorInvoker that matches the <paramref name="argTypes"/></returns>
-        private static ConstructorInvoker GetMatchingConstructor(InterfaceConstructors constructors, Type[] argTypes)
+        private static ConstructorInvoker GetMatchingConstructor(InterfaceConstructorsContainer constructors, Type[] argTypes)
         {
             Contract.Requires(constructors != null, "constructors is null.");
             Contract.Requires(argTypes != null, "argumentTypes is null or empty.");
@@ -84,7 +96,7 @@
         /// <param name="constructors">The constructors.</param>
         /// <param name="argTypes">The arg types.</param>
         /// <returns>The error message</returns>
-        private static string MakeErrorMsg(InterfaceConstructors constructors, Type[] argTypes)
+        private static string MakeErrorMsg(InterfaceConstructorsContainer constructors, Type[] argTypes)
         {
             Contract.Requires(constructors != null, "constructors is null.");
             Contract.Requires(argTypes != null, "argTypes is null or empty.");

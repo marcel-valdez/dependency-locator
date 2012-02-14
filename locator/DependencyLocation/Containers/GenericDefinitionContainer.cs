@@ -1,4 +1,4 @@
-﻿namespace DependencyLocation
+﻿namespace DependencyLocation.Containers
 {
     using System;
     using System.Collections.Generic;
@@ -63,34 +63,17 @@
         /// </summary>
         /// <param name="generic">The generic.</param>
         /// <returns>The interface constructors for the generic type</returns>
-        public InterfaceConstructors MakeInterfaceConstructors(Type generic)
+        public GenericDefinitionContainer AddInterfaceConstructors(Type generic, ConstructorContainer container)
         {
             Contract.Requires(generic != null, "generic can't be null");
+            Contract.Requires(container != null, "The constructor container can't be null");
             Contract.Requires(this.CanMake(generic));
-            Contract.Ensures(Contract.Result<InterfaceConstructors>() != null);
-            Contract.Ensures(Contract.Result<InterfaceConstructors>().GetInterface().Equals(generic));
+            Contract.Ensures(Contract.Result<GenericDefinitionContainer>().Equals(this));
 
             Type concreteGeneric = this.mConcreteGenericDefinition.MakeGenericType(generic.GetGenericArguments());
-            return new InterfaceConstructors(generic)
-                        .SetConcrete(concreteGeneric);
-        }
+            container.AddInterfaceConstructors(generic, concreteGeneric);
 
-        /// <summary>
-        /// Makes the interface constructors.
-        /// </summary>
-        /// <typeparam name="T">The generic type</typeparam>
-        /// <returns>The interface constructors for the generic type T</returns>
-        public InterfaceConstructors<T> MakeInterfaceConstructors<T>()
-        {
-            Contract.Requires(this.CanMake(typeof(T)));
-            Contract.Ensures(Contract.Result<InterfaceConstructors<T>>() != null);
-            Contract.Ensures(Contract.Result<InterfaceConstructors<T>>().GetInterface().Equals(typeof(T)));
-
-            Type concreteGeneric = this.mConcreteGenericDefinition.MakeGenericType(typeof(T).GetGenericArguments());
-            var result = new InterfaceConstructors<T>();
-            result.SetConcrete(concreteGeneric);
-
-            return result;
+            return this;
         }
 
         /// <summary>

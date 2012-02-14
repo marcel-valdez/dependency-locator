@@ -26,6 +26,11 @@ namespace DependencyLocation
         private readonly Dictionary<object, object> mConfiguration = new Dictionary<object, object>();
 
         /// <summary>
+        /// Son los singletons registrados en la aplicación
+        /// </summary>
+        private readonly Dictionary<KeyValuePair<Type, string>, object> mSingletons = new Dictionary<KeyValuePair<Type, string>, object>();
+
+        /// <summary>
         /// Son los constructores de tipos concretos registrados
         /// </summary>
         private readonly Dictionary<KeyValuePair<Type, string>, Dictionary<Type[], ConstructorInvoker>> mConstructors =
@@ -41,11 +46,6 @@ namespace DependencyLocation
         /// Son las relaciones de tipos genéricos registrados (GenericTypeDefinition -> AbstractGenericTypeDefinition)
         /// </summary>
         private readonly Dictionary<KeyValuePair<Type, string>, object> mGenericTypeRelations = new Dictionary<KeyValuePair<Type, string>, object>();
-
-        /// <summary>
-        /// Son los singletons registrados en la aplicación
-        /// </summary>
-        private readonly Dictionary<KeyValuePair<Type, string>, object> mSingletons = new Dictionary<KeyValuePair<Type, string>, object>();
 
         /// <summary>
         /// Gets or sets the default key.

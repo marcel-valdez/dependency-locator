@@ -1,9 +1,13 @@
-﻿namespace Test.Locator
+﻿using DependencyLocation.Containers;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+
+namespace Test.Locator
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using DependencyLocation;
+    using DependencyLocation.Containers;
     using Fasterflect;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using TestingTools.Core;
@@ -79,7 +83,7 @@
             target = new ConstructorContainer();
 
             // Assert
-            Verify.That(target.GetFieldValue("mCtorsList") as IEnumerable<InterfaceConstructors>)
+            Verify.That(target.GetFieldValue("mCtorsList") as IEnumerable<InterfaceConstructorsContainer>)
                   .IsNotNull()
                   .And()
                   .ItsTrueThat(coll => coll.Count() == 0)
@@ -101,7 +105,7 @@
             target.AddInterfaceConstructors(iType, cType);
 
             // Assert
-            Verify.That(target.GetFieldValue("mCtorsList") as IEnumerable<InterfaceConstructors>)
+            Verify.That(target.GetFieldValue("mCtorsList") as IEnumerable<InterfaceConstructorsContainer>)
                   .IsTrueForAny(ctors => ctors.IsType(iType))
                   .And()
                   .ItsTrueThat(coll => coll.Count() == 1)
@@ -161,6 +165,85 @@
         private static ConstructorContainer_Accessor MakeAccesor(ConstructorContainer target)
         {
             return new ConstructorContainer_Accessor(new PrivateObject(target));
+        }
+
+        /// <summary>
+        ///A test for HasRegistered
+        ///</summary>
+        [TestMethod()]
+        public void HasRegisteredValidTest()
+        {
+            // Arrange
+            Type interfaceType = typeof(IGeneric<object>);
+            Type concreteType = typeof(Generic<object>);
+            ConstructorContainer target = new ConstructorContainer()
+                                            .AddInterfaceConstructors(interfaceType, concreteType);
+            bool result;
+            // Act
+            result = target.HasRegistered(interfaceType);
+
+            // Assert
+            Verify.That(result).IsTrue().Now();
+        }
+
+        /// <summary>
+        ///A test for HasRegistered
+        ///</summary>
+        [TestMethod()]
+        public void HasRegisteredInvalidTest()
+        {
+            // Arrange
+            Type interfaceType = typeof(IGeneric<object>);
+            Type baseType = typeof(BaseGeneric<object>);
+            Type concreteType = typeof(Generic<object>);
+            ConstructorContainer target = new ConstructorContainer()
+                                            .AddInterfaceConstructors(interfaceType, concreteType);
+            bool result;
+            // Act
+            result = target.HasRegistered(baseType);
+
+            // Assert
+            Verify.That(result).IsFalse().Now();
+        }
+
+        /// <summary>
+        ///A test for HasRegistered
+        ///</summary>
+        [TestMethod()]
+        public void HasRegisteredInvalidTest1()
+        {
+            // Arrange
+            Type interfaceType = typeof(IGeneric<object>);
+            Type baseType = typeof(BaseGeneric<object>);
+            Type concreteType = typeof(Generic<object>);
+            ConstructorContainer target = new ConstructorContainer()
+                                            .AddInterfaceConstructors(interfaceType, concreteType);
+            bool result;
+            // Act
+            result = target.HasRegistered(concreteType);
+
+            // Assert
+            Verify.That(result).IsFalse().Now();
+        }
+
+        /// <summary>
+        ///A test for HasRegistered
+        ///</summary>
+        [TestMethod()]
+        public void HasRegisteredInvalidTest2()
+        {
+            // Arrange
+            Type interfaceType = typeof(IGeneric<object>);
+            Type targetType = typeof(IEnumerable<object>);
+            Type concreteType = typeof(Generic<object>);
+            ConstructorContainer target = new ConstructorContainer()
+                                            .AddInterfaceConstructors(interfaceType, concreteType);
+            bool result;
+            // Act
+            result = target.HasRegistered(concreteType);
+
+            // Assert
+            Verify.That(result).IsFalse().Now();
         }
     }
 }

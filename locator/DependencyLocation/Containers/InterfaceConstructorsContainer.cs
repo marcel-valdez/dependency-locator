@@ -1,4 +1,4 @@
-﻿namespace DependencyLocation
+﻿namespace DependencyLocation.Containers
 {
     using System;
     using System.Collections.Generic;
@@ -13,7 +13,7 @@
     /// This class is in charge of containing and giving access to constructors of a concrete type
     /// that satisfies a given interface
     /// </summary>
-    internal class InterfaceConstructors
+    internal class InterfaceConstructorsContainer
     {
         private readonly Type mInterfaceType;
         private readonly Dictionary<Type[], ConstructorInvoker> mConstructors;
@@ -22,7 +22,7 @@
         /// Initializes a new instance of the <see cref="InterfaceConstructors"/> class.
         /// </summary>
         /// <param name="interfaceType">Type of the interface.</param>
-        public InterfaceConstructors(Type interfaceType)
+        public InterfaceConstructorsContainer(Type interfaceType)
         {
             Contract.Requires(interfaceType != null);
             this.mInterfaceType = interfaceType;
@@ -33,10 +33,10 @@
         /// Sets the concrete implementation of the interface
         /// </summary>
         /// <typeparam name="T">Concrete type of the interface implementation</typeparam>
-        public InterfaceConstructors SetConcrete<T>()
+        public InterfaceConstructorsContainer SetConcrete<T>()
         {
             Contract.Requires(this.GetInterface().IsAssignableFrom(typeof(T)));
-            Contract.Ensures(Contract.Result<InterfaceConstructors>() == this);
+            Contract.Ensures(Contract.Result<InterfaceConstructorsContainer>() == this);
             return this.SetConcrete(typeof(T));
         }
 
@@ -44,10 +44,10 @@
         /// Sets the concrete implementation of the interface
         /// </summary>
         /// <param name="concreteType">Concrete type of the interface implementation</param>
-        public InterfaceConstructors SetConcrete(Type concreteType)
+        public InterfaceConstructorsContainer SetConcrete(Type concreteType)
         {
             Contract.Requires(this.GetInterface().IsAssignableFrom(concreteType));
-            Contract.Ensures(Contract.Result<InterfaceConstructors>() == this);
+            Contract.Ensures(Contract.Result<InterfaceConstructorsContainer>() == this);
             return this.ClearConstructors()
                        .DefineConstructors(concreteType);
         }
@@ -118,11 +118,11 @@
         /// <summary>
         /// Defines and stores in memory the constructors for the type concreteType.
         /// </summary>
-        private InterfaceConstructors DefineConstructors(Type concreteType)
+        private InterfaceConstructorsContainer DefineConstructors(Type concreteType)
         {
             Contract.Requires(concreteType != null);
             Contract.Requires(!concreteType.IsAbstract, "Concrete type can't be abstract.");
-            Contract.Ensures(Contract.Result<InterfaceConstructors>() == this);
+            Contract.Ensures(Contract.Result<InterfaceConstructorsContainer>() == this);
             foreach (ConstructorInfo ctor in concreteType.GetConstructors())
             {
                 this.AddConstructor(ctor);
@@ -134,9 +134,9 @@
         /// <summary>
         /// Clears the constructors.
         /// </summary>
-        private InterfaceConstructors ClearConstructors()
+        private InterfaceConstructorsContainer ClearConstructors()
         {
-            Contract.Ensures(Contract.Result<InterfaceConstructors>() == this);
+            Contract.Ensures(Contract.Result<InterfaceConstructorsContainer>() == this);
             this.mConstructors.Clear();
             return this;
         }
@@ -147,10 +147,10 @@
         /// <param name="constructor">The constructor.</param>
         /// <param name="target">The target.</param>
         /// <param name="key">The key.</param>
-        private InterfaceConstructors AddConstructor(ConstructorInfo constructor)
+        private InterfaceConstructorsContainer AddConstructor(ConstructorInfo constructor)
         {
             Contract.Requires(constructor != null);
-            Contract.Ensures(Contract.Result<InterfaceConstructors>() == this);
+            Contract.Ensures(Contract.Result<InterfaceConstructorsContainer>() == this);
 
             Type[] lParamTypes = constructor.GetParamTypes();
             if (lParamTypes.Length == 0)
@@ -176,9 +176,9 @@
             bool lEquals = true;
             if (!base.Equals(other))
             {
-                if (other as InterfaceConstructors != null)
+                if (other as InterfaceConstructorsContainer != null)
                 {
-                    Dictionary<Type[], ConstructorInvoker> lOtherCtors = (other as InterfaceConstructors).mConstructors;
+                    Dictionary<Type[], ConstructorInvoker> lOtherCtors = (other as InterfaceConstructorsContainer).mConstructors;
                     lEquals = this.mConstructors.Count == lOtherCtors.Count;
                     TypeArrayComparer comparer = new TypeArrayComparer();
                     for (int i = 0; lEquals && i < this.mConstructors.Count; i++)
@@ -205,7 +205,7 @@
         }
     }
 
-    internal class InterfaceConstructors<T> : InterfaceConstructors
+    internal class InterfaceConstructors<T> : InterfaceConstructorsContainer
     {
         public InterfaceConstructors()
             : base(typeof(T))
