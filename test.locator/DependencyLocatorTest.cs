@@ -70,7 +70,7 @@
             TInterface actual;
 
             // Act
-            actual = target.CreateNamedInstance<TInterface>(key, args);
+            actual = target.CreateNamed<TInterface>(key, args);
 
             // Assert
             Assert.IsNotNull(actual);
@@ -113,7 +113,7 @@
             TInterface actual;
 
             // Act
-            actual = target.GetInstance<TInterface>(key);
+            actual = target.GetSingleton<TInterface>(key);
 
             // Assert
             Assert.AreEqual(expected, actual);
@@ -125,7 +125,7 @@
         {
             // Arrange
             ConcreteStubDependency expected = new ConcreteStubDependency("single");
-            (this.GetLocator() as IDependencyConfigurator).SetupSingletonDependency<IStubDependency>(expected);
+            (this.GetLocator() as IDependencyConfigurator).SetupSingleton<IStubDependency>(expected);
 
             // Act
             GetSingletonTestHelper<IStubDependency>(expected: expected);
@@ -146,8 +146,8 @@
             const string expected = "configuration value";
 
             // Act
-            target.SetConfigurationValue(key, expected);
-            string actual = (target as IDependencyProvider).GetConfigurationValue<string>(key);
+            target.PutConfiguration(key, expected);
+            string actual = (target as IDependencyProvider).GetConfiguration<string>(key);
 
             // Assert
             Assert.AreEqual(expected, actual);
@@ -165,7 +165,7 @@
             };
 
             // Act
-            IConstructorableStub actual = (target as IDependencyProvider).CreateNamedInstance<IConstructorableStub>("default", argument);
+            IConstructorableStub actual = (target as IDependencyProvider).CreateNamed<IConstructorableStub>("default", argument);
 
             // Assert
             Assert.IsNotNull(actual);
@@ -185,7 +185,7 @@
             AnotherConstructorableStub anotherArgument = new AnotherConstructorableStub(argument);
 
             // Act
-            IConstructorableStub actual = (target as IDependencyProvider).CreateNamedInstance<IConstructorableStub>("default", argument, anotherArgument);
+            IConstructorableStub actual = (target as IDependencyProvider).CreateNamed<IConstructorableStub>("default", argument, anotherArgument);
 
             // Assert
             Assert.IsNotNull(actual);
@@ -200,9 +200,9 @@
             var expected = new GenericParameterHelper(10);
 
             // Act
-            target.SetupSingletonDependency<GenericParameterHelper>(() => lazyValue, "default");
+            target.SetupSingleton<GenericParameterHelper>(() => lazyValue, "default");
             lazyValue = expected;
-            GenericParameterHelper actual = (target as IDependencyProvider).GetInstance<GenericParameterHelper>("default");
+            GenericParameterHelper actual = (target as IDependencyProvider).GetSingleton<GenericParameterHelper>("default");
 
             // Assert
             Assert.IsNotNull(actual);
@@ -217,9 +217,9 @@
             var expected = new GenericParameterHelper(10);
 
             // Act
-            target.SetConfigurationValue<GenericParameterHelper>("key", () => lazyValue);
+            target.PutConfiguration<GenericParameterHelper>("key", () => lazyValue);
             lazyValue = expected;
-            GenericParameterHelper actual = (target as IDependencyProvider).GetConfigurationValue<GenericParameterHelper>("key");
+            GenericParameterHelper actual = (target as IDependencyProvider).GetConfiguration<GenericParameterHelper>("key");
 
             // Assert
             Assert.IsNotNull(actual);
@@ -235,7 +235,7 @@
 
             // Act
             target.SetupDependency(typeof(Generic<>), typeof(BaseGeneric<>), "test");
-            result = (target as IDependencyProvider).CreateNamedInstance<BaseGeneric<GenericParameterHelper>>("test");
+            result = (target as IDependencyProvider).CreateNamed<BaseGeneric<GenericParameterHelper>>("test");
 
             // Assert
             Assert.IsNotNull(result);
@@ -250,7 +250,7 @@
 
             // Act
             target.SetupDependency(typeof(Generic<>), typeof(IGeneric<>), "test");
-            result = (target as IDependencyProvider).CreateNamedInstance<IGeneric<GenericParameterHelper>>("test");
+            result = (target as IDependencyProvider).CreateNamed<IGeneric<GenericParameterHelper>>("test");
 
             // Assert
             Assert.IsNotNull(result);
@@ -266,7 +266,7 @@
 
             // Act
             target.SetupDependency(typeof(Generic<>), typeof(IGeneric<>), "test");
-            result = (target as IDependencyProvider).CreateNamedInstance<IGeneric<GenericParameterHelper>>("test", expected);
+            result = (target as IDependencyProvider).CreateNamed<IGeneric<GenericParameterHelper>>("test", expected);
 
             // Assert
             Assert.IsNotNull(result);
@@ -285,7 +285,7 @@
             // Act
             target.SetupDependency<Generic<GenericParameterHelper>, IGeneric<GenericParameterHelper>>("default");
             target.SetupDependency(typeof(CompetingGeneric<>), typeof(IGeneric<>), "default");
-            result = (target as IDependencyProvider).CreateNamedInstance<IGeneric<GenericParameterHelper>>("default", expected);
+            result = (target as IDependencyProvider).CreateNamed<IGeneric<GenericParameterHelper>>("default", expected);
 
             // Assert
             Assert.IsNotNull(result);

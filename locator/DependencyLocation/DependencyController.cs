@@ -47,7 +47,7 @@ namespace DependencyLocation
         }
 
         #region IDependencyConfigurator Members
-        public void SetConfigurationValue(object key, object value)
+        public void PutConfiguration(object key, object value)
         {
             try
             {
@@ -61,12 +61,12 @@ namespace DependencyLocation
             }
         }
 
-        public void SetConfigurationValue<T>(object key, Func<T> lazyEvaluator)
+        public void PutConfiguration<T>(object key, Func<T> lazyEvaluator)
         {
-            this.SetConfigurationValue(key, new Lazy<T>(lazyEvaluator));
+            this.PutConfiguration(key, new Lazy<T>(lazyEvaluator));
         }
 
-        public void SetupSingletonDependency<TInterface>(TInterface singleton, string key = null)
+        public void SetupSingleton<TInterface>(TInterface singleton, string key = null)
         {
             key = key ?? this.DefaultKey ?? "default";
             Type abstractType = typeof(TInterface);
@@ -76,7 +76,7 @@ namespace DependencyLocation
             }
         }
 
-        public void SetupSingletonDependency<TInterface>(Func<TInterface> lazyEvaluator, string key = null)
+        public void SetupSingleton<TInterface>(Func<TInterface> lazyEvaluator, string key = null)
         {
             key = key ?? this.DefaultKey ?? "default";
             Lazy<TInterface> lazySingleton = new Lazy<TInterface>(lazyEvaluator);
@@ -136,7 +136,7 @@ namespace DependencyLocation
 
         #region IDependencyProvider Members
 
-        public T GetConfigurationValue<T>(object key)
+        public T GetConfiguration<T>(object key)
         {
             try
             {
@@ -150,12 +150,12 @@ namespace DependencyLocation
             }
         }
 
-        public TInterface CreateInstance<TInterface>(params object[] args)
+        public TInterface Create<TInterface>(params object[] args)
         {
-            return CreateNamedInstance<TInterface>(this.DefaultKey, args);
+            return CreateNamed<TInterface>(this.DefaultKey, args);
         }
 
-        public TInterface CreateNamedInstance<TInterface>(string key, params object[] args)
+        public TInterface CreateNamed<TInterface>(string key, params object[] args)
         {
             Type[] lArgTypes = args != null && args.Length > 0 ? Type.GetTypeArray(args) : Type.EmptyTypes;
             Type lInterfaceType = typeof(TInterface);
@@ -196,7 +196,7 @@ namespace DependencyLocation
             }
         }
 
-        public TInterface GetInstance<TInterface>(string key = null) where TInterface : class
+        public TInterface GetSingleton<TInterface>(string key = null) where TInterface : class
         {
             key = key ?? this.DefaultKey ?? "default";
             Type interfaceType = typeof(TInterface);

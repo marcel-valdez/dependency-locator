@@ -16,7 +16,7 @@ namespace DependencyLocation
         /// </summary>
         /// <param name="key">The key.</param>
         /// <param name="value">The value.</param>
-        void SetConfigurationValue(object key, object value);
+        void PutConfiguration(object key, object value);
 
         /// <summary>
         /// Sets the configuration.
@@ -24,7 +24,7 @@ namespace DependencyLocation
         /// <typeparam name="T">Type of the configuration value</typeparam>
         /// <param name="key">The key.</param>
         /// <param name="lazyEvaluator">The lazy evaluator.</param>
-        void SetConfigurationValue<T>(object key, Func<T> lazyEvaluator);
+        void PutConfiguration<T>(object key, Func<T> lazyEvaluator);
 
         /// <summary>
         /// Setups the singleton dependency.
@@ -33,7 +33,7 @@ namespace DependencyLocation
         /// <typeparam name="TInterface">The type of the interface.</typeparam>
         /// <param name="singleton">The singleton.</param>
         /// <param name="key">The key.</param>
-        void SetupSingletonDependency<TInterface>(TInterface singleton, string key = null);
+        void SetupSingleton<TInterface>(TInterface singleton, string key = null);
 
         /// <summary>
         /// Setups the singleton dependency, using a lazy evaluator (obtains the singleton in a lazy evaluation)
@@ -41,7 +41,7 @@ namespace DependencyLocation
         /// <typeparam name="TInterface">The type of the interface.</typeparam>
         /// <param name="lazyEvaluator">The lazy evaluator.</param>
         /// <param name="key">The key.</param>
-        void SetupSingletonDependency<TInterface>(Func<TInterface> lazyEvaluator, string key = null);
+        void SetupSingleton<TInterface>(Func<TInterface> lazyEvaluator, string key = null);
 
         /// <summary>
         /// Setups the dependency.

@@ -15,9 +15,9 @@ namespace DependencyLocation.Setup
         /// <summary>
         /// Setups the dependencies.
         /// </summary>
-        /// <param name="injector">The injector.</param>
+        /// <param name="container">The dependency container.</param>
         /// <param name="prefix">The prefix.</param>
         /// <param name="defaultKey">The default key.</param>
-        void SetupDependencies(IDependencyConfigurator injector, string prefix, string defaultKey);
+        void SetupDependencies(IDependencyConfigurator container, string prefix, string defaultKey);
     }
 }

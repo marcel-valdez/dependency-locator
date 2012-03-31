@@ -11,7 +11,7 @@ namespace DependencyLocation
         /// <typeparam name="T">Tipo de valor configurado</typeparam>
         /// <param name="key">The key.</param>
         /// <returns>Instance of type <typeparamref name="T"/></returns>
-        T GetConfigurationValue<T>(object key);
+        T GetConfiguration<T>(object key);
 
         /// <summary>
         /// Creates the instance.
@@ -21,7 +21,7 @@ namespace DependencyLocation
         /// <returns>
         /// Una instancia del tipo <typeparamref name="TInterface"/>
         /// </returns>
-        TInterface CreateInstance<TInterface>(params object[] args);
+        TInterface Create<TInterface>(params object[] args);
 
         /// <summary>
         /// Creates a new instance of type <typeparamref name="TInterface"/>
@@ -32,7 +32,7 @@ namespace DependencyLocation
         /// <returns>
         /// Una instancia del tipo <typeparamref name="TInterface"/>
         /// </returns>
-        TInterface CreateNamedInstance<TInterface>(string key, params object[] args);
+        TInterface CreateNamed<TInterface>(string key, params object[] args);
 
         /// <summary>
         /// Gets an instance of the type <typeparamref name="TInterface"/>
@@ -41,7 +41,7 @@ namespace DependencyLocation
         /// </summary>
         /// <typeparam name="TInterface">The type of the interface.</typeparam>
         /// <returns>Una instance del tipo <typeparamref name="TInterface"/></returns>
-        TInterface GetInstance<TInterface>(string key = null)
+        TInterface GetSingleton<TInterface>(string key = null)
                 where TInterface : class;
     }
 }

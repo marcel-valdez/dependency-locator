@@ -79,7 +79,7 @@
 
             // Act
             DependencyLoader.Loader.LoadDependencies(@".\TestApp.config");
-            IServer concrete = Dependency.Locator.CreateNamedInstance<IServer>("testPrefix.testDefault");
+            IServer concrete = Dependency.Locator.CreateNamed<IServer>("testPrefix.testDefault");
 
             // Assert
             Assert.IsNotNull(concrete);

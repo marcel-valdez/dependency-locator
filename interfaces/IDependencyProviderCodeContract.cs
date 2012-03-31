@@ -6,7 +6,7 @@ namespace DependencyLocation
     [ContractClassFor(typeof(IDependencyProvider))]
     internal abstract class IDependencyProviderCodeContract : IDependencyProvider
     {
-        public TInterface GetInstance<TInterface>(string key)
+        public TInterface GetSingleton<TInterface>(string key)
             where TInterface : class
         {
             Contract.Ensures(Contract.Result<TInterface>() != null);
@@ -19,18 +19,18 @@ namespace DependencyLocation
             return default(TInterface);
         }
 
-        public TInterface CreateInstance<TInterface>(object[] args)
+        public TInterface Create<TInterface>(object[] args)
         {
             return default(TInterface);
         }
 
-        public T GetConfigurationValue<T>(object key)
+        public T GetConfiguration<T>(object key)
         {
             Contract.Requires(key != null);
             return default(T);
         }
 
-        public TInterface CreateNamedInstance<TInterface>(string key, params object[] args)
+        public TInterface CreateNamed<TInterface>(string key, params object[] args)
         {
             throw new NotImplementedException();
         }

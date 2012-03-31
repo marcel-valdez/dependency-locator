@@ -8,23 +8,23 @@ namespace DependencyLocation
     {
         #region IDependencyLocator Members
 
-        public void SetConfigurationValue(object key, object value)
+        public void PutConfiguration(object key, object value)
         {
             Contract.Requires(key != null);
         }
 
-        public void SetConfigurationValue<T>(object key, Func<T> lazyEvaluator)
+        public void PutConfiguration<T>(object key, Func<T> lazyEvaluator)
         {
             Contract.Requires(key != null, "key is null.");
             Contract.Requires(lazyEvaluator != null, "lazyEvaluator is null.");
         }
 
-        public void SetupSingletonDependency<TInterface>(TInterface singleton, string key = null)
+        public void SetupSingleton<TInterface>(TInterface singleton, string key = null)
         {
             throw new NotImplementedException();
         }
 
-        public void SetupSingletonDependency<TInterface>(Func<TInterface> lazyEvaluator, string key = null)
+        public void SetupSingleton<TInterface>(Func<TInterface> lazyEvaluator, string key = null)
         {
             throw new NotImplementedException();
         }
