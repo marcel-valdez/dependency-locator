@@ -13,7 +13,7 @@ namespace Test.Locator
     {
         private static DependencyController controller = new DependencyController();
 
-        public override object GetLocator()
+        public override object MakeLocator()
         {
             return controller;
         }

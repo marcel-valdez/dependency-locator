@@ -115,18 +115,26 @@ namespace DependencyLocation.Setup
             }
             else
             {
-                Contract.Assume(new FileInfo(configFilePath).Exists,
-                    string.Format(Properties.Resources.ConfigFileNotFound, configFilePath));
-                ExeConfigurationFileMap fileMap = new ExeConfigurationFileMap
-                {
-                    ExeConfigFilename = configFilePath
-                };
-
+                // Read the configuration from the path
+                ExeConfigurationFileMap fileMap = ReadConfigFileMap(configFilePath);
                 // Open the configuration and get the section
                 Configuration config = ConfigurationManager.OpenMappedExeConfiguration(fileMap, ConfigurationUserLevel.None);
                 ConfigurationSection section = config.GetSection(CONFIGSECTIONPATH);
                 return (DependencyConfiguration)section;
             }
+        }
+
+        protected virtual ExeConfigurationFileMap ReadConfigFileMap(string configFilePath)
+        {
+            Contract.Requires(!string.IsNullOrEmpty(configFilePath), "El nombre de archivo no debe ser vacío o nulo.");
+            Contract.Assume(new FileInfo(configFilePath).Exists,
+                string.Format(Properties.Resources.ConfigFileNotFound, configFilePath));
+            ExeConfigurationFileMap fileMap = new ExeConfigurationFileMap
+            {
+                ExeConfigFilename = configFilePath
+            };
+
+            return fileMap;
         }
     }
 }

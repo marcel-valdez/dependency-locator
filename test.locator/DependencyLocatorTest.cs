@@ -10,63 +10,12 @@
     [TestClass()]
     public class DependencyLocatorTest
     {
-        private TestContext testContextInstance;
-
-        /// <summary>
-        ///Gets or sets the test context which provides
-        ///information about and functionality for the current test run.
-        ///</summary>
-        public TestContext TestContext
-        {
-            get
-            {
-                return testContextInstance;
-            }
-            set
-            {
-                testContextInstance = value;
-            }
-        }
-
-        #region Additional test attributes
-
-        //
-        //You can use the following additional attributes as you write your tests:
-        //
-        //Use ClassInitialize to run code before running the first test in the class
-        //[ClassInitialize()]
-        //public static void MyClassInitialize(TestContext testContext)
-        //{
-        //}
-        //
-        //Use ClassCleanup to run code after all tests in a class have run
-        //[ClassCleanup()]
-        //public static void MyClassCleanup()
-        //{
-        //}
-        //
-        //Use TestInitialize to run code before running each test
-        //[TestInitialize()]
-        //public void MyTestInitialize()
-        //{
-        //}
-        //
-        //Use TestCleanup to run code after each test has run
-        [TestCleanup()]
-        public void MyTestCleanup()
-        {
-            (this.GetLocator() as IDependencyConfigurator).ReleaseInjections();
-        }
-
-        #endregion Additional test attributes
-
         /// <summary>
         ///A test for CreateInstance
         ///</summary>
-        public TInterface CreateInstanceTestHelper<TInterface>(string key = "default", params object[] args)
+        public TInterface CreateInstanceTestHelper<TInterface>(IDependencyProvider target, string key = "default", params object[] args)
         {
-            // Arrange
-            IDependencyProvider target = this.GetLocator() as IDependencyProvider;
+            // Arrange            
             TInterface actual;
 
             // Act
@@ -80,21 +29,26 @@
         [TestMethod()]
         public void CanSetupAndCreateParameterlessInstance()
         {
-            (this.GetLocator() as IDependencyConfigurator).SetupDependency<ConcreteStubDependency, IStubDependency>();
+            // Arrange
+            object target = this.MakeLocator();
+            (target as IDependencyConfigurator).SetupDependency<ConcreteStubDependency, IStubDependency>();
 
-            CreateInstanceTestHelper<IStubDependency>();
+            // Act & Assert
+            CreateInstanceTestHelper<IStubDependency>(target as IDependencyProvider);
         }
 
         [TestMethod()]
         public void CanSetupAndCreateParameterizedInstance()
         {
             // Arrange
-            (this.GetLocator() as IDependencyConfigurator).SetupDependency<ConcreteStubDependency, IStubDependency>();
+            object target = this.MakeLocator();
+            (target as IDependencyConfigurator).SetupDependency<ConcreteStubDependency, IStubDependency>();
+            System.Threading.Thread.Sleep(10);
 
             // Act
-            IStubDependency actual = CreateInstanceTestHelper<IStubDependency>("default", "test");
+            IStubDependency actual = CreateInstanceTestHelper<IStubDependency>(target as IDependencyProvider, "default", "test");
             string firstConstructorResult = actual.Data;
-            actual = CreateInstanceTestHelper<IStubDependency>("default", "test", 10, "postfix");
+            actual = CreateInstanceTestHelper<IStubDependency>(target as IDependencyProvider, "default", "test", 10, "postfix");
             string secondConstructorResult = actual.Data;
 
             // Assert
@@ -105,11 +59,10 @@
         /// <summary>
         ///A test for GetSingleton
         ///</summary>
-        public TInterface GetSingletonTestHelper<TInterface>(string key = "default", TInterface expected = null)
+        public TInterface GetSingletonTestHelper<TInterface>(IDependencyProvider target, string key = "default", TInterface expected = null)
             where TInterface : class
         {
             // Arrange
-            IDependencyProvider target = this.GetLocator() as IDependencyProvider;
             TInterface actual;
 
             // Act
@@ -125,10 +78,11 @@
         {
             // Arrange
             ConcreteStubDependency expected = new ConcreteStubDependency("single");
-            (this.GetLocator() as IDependencyConfigurator).SetupSingleton<IStubDependency>(expected);
+            var locator = (this.MakeLocator() as IDependencyConfigurator);
+            locator.SetupSingleton<IStubDependency>(expected);
 
             // Act
-            GetSingletonTestHelper<IStubDependency>(expected: expected);
+            GetSingletonTestHelper<IStubDependency>(locator as IDependencyProvider, expected: expected);
 
             // Assert
             // Automatically passes
@@ -141,7 +95,7 @@
         public void CanSetAndGetConfigurationValues()
         {
             // Arrange
-            IDependencyConfigurator target = this.GetLocator() as IDependencyConfigurator;
+            IDependencyConfigurator target = this.MakeLocator() as IDependencyConfigurator;
             const string key = "key";
             const string expected = "configuration value";
 
@@ -157,7 +111,7 @@
         public void CanCreateInstancesWithDerivedInstancesOfParameterTypes()
         {
             // Arrange
-            var target = this.GetLocator() as IDependencyConfigurator;
+            var target = this.MakeLocator() as IDependencyConfigurator;
             target.SetupDependency<ConstructorableStub, IConstructorableStub>("default");
             InheritedStubDependency argument = new InheritedStubDependency
             {
@@ -176,7 +130,7 @@
         public void CanCreateInstancesWithDerivedInstancesOfTwoParameterTypes()
         {
             // Arrange
-            IDependencyConfigurator target = this.GetLocator() as IDependencyConfigurator;
+            IDependencyConfigurator target = this.MakeLocator() as IDependencyConfigurator;
             target.SetupDependency<ConstructorableStub, IConstructorableStub>("default");
             InheritedStubDependency argument = new InheritedStubDependency
             {
@@ -196,7 +150,7 @@
         public void CanSetupAndRetrieveLazySingleton()
         {
             // Arrange
-            var target = this.GetLocator() as IDependencyConfigurator;
+            var target = this.MakeLocator() as IDependencyConfigurator;
             var expected = new GenericParameterHelper(10);
 
             // Act
@@ -213,7 +167,7 @@
         public void CanSetupAndRetrieveLazyConfigValue()
         {
             // Arrange
-            var target = this.GetLocator() as IDependencyConfigurator;
+            var target = this.MakeLocator() as IDependencyConfigurator;
             var expected = new GenericParameterHelper(10);
 
             // Act
@@ -230,7 +184,7 @@
         public void CanSetupAndCreateGenericAbstractType()
         {
             // Arrange
-            var target = this.GetLocator() as IDependencyConfigurator;
+            var target = this.MakeLocator() as IDependencyConfigurator;
             BaseGeneric<GenericParameterHelper> result;
 
             // Act
@@ -245,7 +199,7 @@
         public void CanSetupAndCreateGenericInterfaceType()
         {
             // Arrange
-            var target = this.GetLocator() as IDependencyConfigurator;
+            var target = this.MakeLocator() as IDependencyConfigurator;
             IGeneric<GenericParameterHelper> result;
 
             // Act
@@ -260,7 +214,7 @@
         public void CanSetupAndCreateGenericInterfaceTypeWithParameter()
         {
             // Arrange
-            var target = this.GetLocator() as IDependencyConfigurator;
+            var target = this.MakeLocator() as IDependencyConfigurator;
             IGeneric<GenericParameterHelper> result;
             GenericParameterHelper expected = new GenericParameterHelper(10);
 
@@ -278,7 +232,7 @@
         public void ConcreteTypeHasPriorityOverGeneric()
         {
             // Arrange
-            var target = this.GetLocator() as IDependencyConfigurator;
+            var target = this.MakeLocator() as IDependencyConfigurator;
             IGeneric<GenericParameterHelper> result;
             GenericParameterHelper expected = new GenericParameterHelper(10);
 
@@ -292,9 +246,9 @@
             Assert.IsInstanceOfType(result, typeof(Generic<GenericParameterHelper>));
         }
 
-        public virtual object GetLocator()
+        public virtual object MakeLocator()
         {
-            return Dependency.Locator;
+            return new DependencyController();
         }
 
         private GenericParameterHelper lazyValue = null;

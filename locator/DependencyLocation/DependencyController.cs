@@ -136,6 +136,12 @@ namespace DependencyLocation
 
         #region IDependencyProvider Members
 
+        /// <summary>
+        /// Gets a configuration value.
+        /// </summary>
+        /// <typeparam name="T">The type of the configuration value</typeparam>
+        /// <param name="key">The key.</param>
+        /// <returns>The configuration value identified with the <para>key</para> </returns>
         public T GetConfiguration<T>(object key)
         {
             try
@@ -150,11 +156,24 @@ namespace DependencyLocation
             }
         }
 
+        /// <summary>
+        /// Creates the an instance of the type <typeparamref name="TInterface"/>.
+        /// </summary>
+        /// <typeparam name="TInterface">The type of the interface.</typeparam>
+        /// <param name="args">The args.</param>
+        /// <returns>Creates a named instance with the registered constructor for the type <typeparamref name="TInterface"/></returns>
         public TInterface Create<TInterface>(params object[] args)
         {
             return CreateNamed<TInterface>(this.DefaultKey, args);
         }
 
+        /// <summary>
+        /// Creates the named.
+        /// </summary>
+        /// <typeparam name="TInterface">The type of the interface.</typeparam>
+        /// <param name="key">The key.</param>
+        /// <param name="args">The args.</param>
+        /// <returns>Creates a named instance with the registered constructor for the type <typeparamref name="TInterface"/></returns>
         public TInterface CreateNamed<TInterface>(string key, params object[] args)
         {
             Type[] lArgTypes = args != null && args.Length > 0 ? Type.GetTypeArray(args) : Type.EmptyTypes;
@@ -196,6 +215,12 @@ namespace DependencyLocation
             }
         }
 
+        /// <summary>
+        /// Gets the singleton.
+        /// </summary>
+        /// <typeparam name="TInterface">The type of the interface.</typeparam>
+        /// <param name="key">The key.</param>
+        /// <returns>The registered singleton for the type <typeparamref name="TInterface"/></returns>
         public TInterface GetSingleton<TInterface>(string key = null) where TInterface : class
         {
             key = key ?? this.DefaultKey ?? "default";

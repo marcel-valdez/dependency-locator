@@ -153,7 +153,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <Shadow Include="Test References\DependencyLocator.accessor" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

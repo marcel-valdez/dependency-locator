@@ -8,6 +8,7 @@
     using Fasterflect;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using TestAssembly;
+    using System.IO;
 
     /// <summary>
     ///This is a test class for DependencyLoaderTest and is intended
@@ -16,57 +17,6 @@
     [TestClass()]
     public class DependencyLoaderTest
     {
-        private TestContext testContextInstance;
-
-        /// <summary>
-        ///Gets or sets the test context which provides
-        ///information about and functionality for the current test run.
-        ///</summary>
-        public TestContext TestContext
-        {
-            get
-            {
-                return testContextInstance;
-            }
-
-            set
-            {
-                testContextInstance = value;
-            }
-        }
-
-        #region Additional test attributes
-
-        //
-        //You can use the following additional attributes as you write your tests:
-        //
-        //Use ClassInitialize to run code before running the first test in the class
-        [ClassInitialize()]
-        public static void MyClassInitialize(TestContext testContext)
-        {
-        }
-
-        //
-        //Use ClassCleanup to run code after all tests in a class have run
-        //[ClassCleanup()]
-        //public static void MyClassCleanup()
-        //{
-        //}
-        //
-        //Use TestInitialize to run code before running each test
-        //[TestInitialize()]
-        //public void MyTestInitialize()
-        //{
-        //}
-        //
-        //Use TestCleanup to run code after each test has run
-        //[TestCleanup()]
-        //public void MyTestCleanup()
-        //{
-        //}
-        //
-
-        #endregion Additional test attributes
 
         /// <summary>
         ///A test for LoadDependencies
@@ -75,10 +25,10 @@
         public void LoadDependenciesTest()
         {
             // Arrange
-            //string configPath = System.AppDomain.CurrentDomain.BaseDirectory + ".\TestApp.Config"
+            string configPath = GetConfigFilePath();
 
             // Act
-            DependencyLoader.Loader.LoadDependencies(@".\TestApp.config");
+            DependencyLoader.Loader.LoadDependencies(configPath);
             IServer concrete = Dependency.Locator.CreateNamed<IServer>("testPrefix.testDefault");
 
             // Assert
@@ -113,10 +63,28 @@
         [TestMethod()]
         public void GetConfigSectionTest()
         {
+            // Arrange 
             DependencyLoader target = DependencyLoader.Loader;
             DependencyConfiguration actual;
-            actual = target.CallMethod("GetConfigSection", @".\TestApp.config") as DependencyConfiguration;
+            string configPath = GetConfigFilePath();
+
+            // Act
+            actual = target.CallMethod("GetConfigSection", configPath) as DependencyConfiguration;
+
+            // Assert
             Assert.IsNotNull(actual);
+        }
+
+        /// <summary>
+        /// Gets the dependencies config file path.
+        /// </summary>
+        /// <returns>The full path to the configuration file.</returns>
+        private static string GetConfigFilePath()
+        {
+            string codeBaseFilePath = typeof(DependencyLoaderTest).Assembly.EscapedCodeBase;
+            int stringEnd = codeBaseFilePath.LastIndexOf('/');
+            return codeBaseFilePath.Substring(0, stringEnd + 1)
+                                   .Replace("file:///", "") + "TestApp.config";
         }
     }
 }
