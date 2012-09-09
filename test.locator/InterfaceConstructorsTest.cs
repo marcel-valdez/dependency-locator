@@ -1,12 +1,11 @@
 ﻿namespace Test.Locator
 {
 	using System;
-	using DependencyLocation;
+	using DependencyLocation.Containers;
 	using Fasterflect;
 	using Microsoft.VisualStudio.TestTools.UnitTesting;
 	using TestingTools.Core;
 	using TestingTools.Extensions;
-	using DependencyLocation.Containers;
 
 	/// <summary>
 	///This is a test class for InterfaceConstructorsTest and is intended

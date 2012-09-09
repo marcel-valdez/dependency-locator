@@ -1,7 +1,6 @@
 ﻿namespace Test.Locator
 {
     using System;
-    using DependencyLocation.Extensions;
     using DependencyLocation.Reflection;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 

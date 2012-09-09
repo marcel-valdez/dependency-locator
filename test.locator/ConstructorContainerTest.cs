@@ -1,7 +1,4 @@
-﻿using DependencyLocation.Containers;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-
+﻿
 namespace Test.Locator
 {
     using System;

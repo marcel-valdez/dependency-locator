@@ -1,6 +1,9 @@
 ﻿namespace Test.Locator
 {
+    using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.IO;
     using System.Linq;
     using DependencyLocation;
     using DependencyLocation.Configuration;
@@ -8,7 +11,6 @@
     using Fasterflect;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using TestAssembly;
-    using System.IO;
 
     /// <summary>
     ///This is a test class for DependencyLoaderTest and is intended
@@ -17,7 +19,12 @@
     [TestClass()]
     public class DependencyLoaderTest
     {
-
+        private static TestContext testContext;
+        
+        [ClassInitialize]
+        public static void InitClass(TestContext context) {
+            testContext = context;
+        }
         /// <summary>
         ///A test for LoadDependencies
         ///</summary>
@@ -25,7 +32,7 @@
         public void LoadDependenciesTest()
         {
             // Arrange
-            string configPath = GetConfigFilePath();
+            string configPath = GetFullFileNameInExecutionPath("TestApp.config");
 
             // Act
             DependencyLoader.Loader.LoadDependencies(configPath);
@@ -66,7 +73,7 @@
             // Arrange 
             DependencyLoader target = DependencyLoader.Loader;
             DependencyConfiguration actual;
-            string configPath = GetConfigFilePath();
+            string configPath = GetFullFileNameInExecutionPath("TestApp.config");
 
             // Act
             actual = target.CallMethod("GetConfigSection", configPath) as DependencyConfiguration;
@@ -76,15 +83,72 @@
         }
 
         /// <summary>
-        /// Gets the dependencies config file path.
+        /// Gets the full file path of an existing output file in the execution environment
         /// </summary>
-        /// <returns>The full path to the configuration file.</returns>
-        private static string GetConfigFilePath()
+        /// <returns>The full path to the file.</returns>
+        /// <param name="filename">The filename without path</param>
+        private static string GetFullFileNameInExecutionPath(string filename)
         {
+            string deploymentPath = testContext.DeploymentDirectory + "/" + filename;
+            if (FileExists(filename))
+            {
+                return deploymentPath;
+            }
+
+            string testDeploymentPath = testContext.TestDeploymentDir + "/" + filename;
+            if (FileExists(testDeploymentPath))
+            {
+                return testDeploymentPath;
+            }
+
+            string testDirPath = testContext.TestDir + "/" + filename;
+            if (FileExists(testDirPath))
+            {
+                return testDirPath;
+            }
+
+            string testRunPath = testContext.TestRunDirectory + "/" + filename;
+            if (FileExists(testRunPath))
+            {
+                return testRunPath;
+            }
+            
             string codeBaseFilePath = typeof(DependencyLoaderTest).Assembly.EscapedCodeBase;
             int stringEnd = codeBaseFilePath.LastIndexOf('/');
-            return codeBaseFilePath.Substring(0, stringEnd + 1)
-                                   .Replace("file:///", "") + "TestApp.config";
+            string codebaseFilePath = codeBaseFilePath.Substring(0, stringEnd + 1)
+                                   .Replace("file:///", "") + filename;
+            
+            if (FileExists(codebaseFilePath))
+            {
+                return codebaseFilePath;
+            }
+
+            string appDomainPath = AppDomain.CurrentDomain.BaseDirectory + "/" + filename;
+            if (FileExists(appDomainPath))
+            {
+                return appDomainPath;
+            }
+
+
+            string currentPath = Directory.GetCurrentDirectory() + "/" + filename;
+            if (FileExists(currentPath))
+            {
+                return currentPath;
+            }
+
+            var stackFrameFile = new FileInfo(new StackFrame(true).GetFileName());
+            string stackFramePath = stackFrameFile.Directory.FullName + "/" + filename;
+            if (FileExists(stackFramePath))
+            {
+                return stackFramePath;
+            }            
+
+            throw new Exception(filename + " not found.");
+        }
+
+        private static bool FileExists(string filepath)
+        {
+            return new FileInfo(filepath).Exists;
         }
     }
 }

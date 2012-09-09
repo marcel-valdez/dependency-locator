@@ -1,12 +1,11 @@
 ﻿namespace Test.Locator
 {
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
     using System;
-    using DependencyLocation;
+    using DependencyLocation.Containers;
+    using Fasterflect;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
     using TestingTools.Core;
     using TestingTools.Extensions;
-    using Fasterflect;
-    using DependencyLocation.Containers;
 
     /// <summary>
     ///This is a test class for GenericDefinitionContainerTest and is intended

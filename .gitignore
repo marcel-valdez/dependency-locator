@@ -10,3 +10,6 @@
 /locator/TestResults
 *.suo
 TestResults
+_NCrunch_dependency-locator/
+locator/StyleCop.Cache
+output/
