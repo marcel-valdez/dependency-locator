@@ -50,7 +50,7 @@ namespace Bank.Models {
 	public class Account {
 		public string AccountHolder { get; set; }
 		
-		public decimal Balance { get; }
+		public decimal Balance { get; private set; }
 		
 		public int AccountNumber { get; set; }
 		
