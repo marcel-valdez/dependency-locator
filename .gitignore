@@ -13,3 +13,6 @@ TestResults
 _NCrunch_dependency-locator/
 locator/StyleCop.Cache
 output/
+*.gpState
+*.testsettings
+*.*~*
