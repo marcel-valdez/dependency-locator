@@ -89,25 +89,25 @@
         /// <param name="filename">The filename without path</param>
         private static string GetFullFileNameInExecutionPath(string filename)
         {
-            string deploymentPath = testContext.DeploymentDirectory + "/" + filename;
+            string deploymentPath = String.Format("{0}/{1}", testContext.DeploymentDirectory, filename);
             if (FileExists(filename))
             {
                 return deploymentPath;
             }
 
-            string testDeploymentPath = testContext.TestDeploymentDir + "/" + filename;
+            string testDeploymentPath = String.Format("{0}/{1}", testContext.TestDeploymentDir, filename);
             if (FileExists(testDeploymentPath))
             {
                 return testDeploymentPath;
             }
 
-            string testDirPath = testContext.TestDir + "/" + filename;
+            string testDirPath = String.Format("{0}/{1}", testContext.TestDir, filename);
             if (FileExists(testDirPath))
             {
                 return testDirPath;
             }
 
-            string testRunPath = testContext.TestRunDirectory + "/" + filename;
+            string testRunPath = String.Format("{0}/{1}", testContext.TestRunDirectory, filename);
             if (FileExists(testRunPath))
             {
                 return testRunPath;
@@ -123,21 +123,21 @@
                 return codebaseFilePath;
             }
 
-            string appDomainPath = AppDomain.CurrentDomain.BaseDirectory + "/" + filename;
+            string appDomainPath = String.Format("{0}/{1}", AppDomain.CurrentDomain.BaseDirectory, filename);
             if (FileExists(appDomainPath))
             {
                 return appDomainPath;
             }
 
 
-            string currentPath = Directory.GetCurrentDirectory() + "/" + filename;
+            string currentPath = String.Format("{0}/{1}", Directory.GetCurrentDirectory(), filename);
             if (FileExists(currentPath))
             {
                 return currentPath;
             }
 
             var stackFrameFile = new FileInfo(new StackFrame(true).GetFileName());
-            string stackFramePath = stackFrameFile.Directory.FullName + "/" + filename;
+            string stackFramePath = String.Format("{0}/{1}", stackFrameFile.Directory.FullName, filename);
             if (FileExists(stackFramePath))
             {
                 return stackFramePath;
