@@ -2,13 +2,13 @@
 {
     using System;
     using DependencyLocation.Reflection;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using NUnit.Framework;
 
     /// <summary>
     ///This is a test class for TypeArrayComparerTest and is intended
     ///to contain all TypeArrayComparerTest Unit Tests
     ///</summary>
-    [TestClass()]
+    [TestFixture]
     public class TypeArrayComparerTest
     {
         private TestContext testContextInstance;
@@ -64,7 +64,7 @@
         /// <summary>
         ///A test for Equals
         ///</summary>
-        [TestMethod()]
+        [Test]
         public void EqualsTest()
         {
             TypeArrayComparer target = new TypeArrayComparer();
@@ -82,7 +82,7 @@
         /// <summary>
         ///A test for GetHashCode
         ///</summary>
-        [TestMethod()]
+        [Test]
         public void GetHashCodeTest()
         {
             TypeArrayComparer target = new TypeArrayComparer();

@@ -1,13 +1,13 @@
 ﻿namespace Test.Locator
 {
     using DependencyLocation;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using NUnit.Framework;
 
     /// <summary>
     ///This is a test class for DependencyInjectorTest and is intended
     ///to contain all DependencyContainerTest Unit Tests
     ///</summary>
-    [TestClass()]
+    [TestFixture]
     public class DependencyLocatorTest
     {
         /// <summary>
@@ -26,7 +26,7 @@
             return actual;
         }
 
-        [TestMethod()]
+        [Test]
         public void CanSetupAndCreateParameterlessInstance()
         {
             // Arrange
@@ -37,7 +37,7 @@
             CreateInstanceTestHelper<IStubDependency>(target as IDependencyProvider);
         }
 
-        [TestMethod()]
+        [Test]
         public void CanSetupAndCreateParameterizedInstance()
         {
             // Arrange
@@ -73,7 +73,7 @@
             return actual;
         }
 
-        [TestMethod()]
+        [Test]
         public void CanSetupAndRetrieveSingleton()
         {
             // Arrange
@@ -91,7 +91,7 @@
         /// <summary>
         ///A test for SetConfiguration
         ///</summary>
-        [TestMethod()]
+        [Test]
         public void CanSetAndGetConfigurationValues()
         {
             // Arrange
@@ -107,7 +107,7 @@
             Assert.AreEqual(expected, actual);
         }
 
-        [TestMethod()]
+        [Test]
         public void CanCreateInstancesWithDerivedInstancesOfParameterTypes()
         {
             // Arrange
@@ -126,7 +126,7 @@
             Assert.AreEqual(argument.Data, actual.Data);
         }
 
-        [TestMethod()]
+        [Test]
         public void CanCreateInstancesWithDerivedInstancesOfTwoParameterTypes()
         {
             // Arrange
@@ -146,81 +146,81 @@
             Assert.AreEqual(argument.Data + anotherArgument.Data, actual.Data);
         }
 
-        [TestMethod()]
+        [Test]
         public void CanSetupAndRetrieveLazySingleton()
         {
             // Arrange
             var target = this.MakeLocator() as IDependencyConfigurator;
-            var expected = new GenericParameterHelper(10);
+            var expected = new ParameterHelper(10);
 
             // Act
-            target.SetupSingleton<GenericParameterHelper>(() => lazyValue, "default");
+            target.SetupSingleton<ParameterHelper>(() => lazyValue, "default");
             lazyValue = expected;
-            GenericParameterHelper actual = (target as IDependencyProvider).GetSingleton<GenericParameterHelper>("default");
+            ParameterHelper actual = (target as IDependencyProvider).GetSingleton<ParameterHelper>("default");
 
             // Assert
             Assert.IsNotNull(actual);
             Assert.AreEqual(expected, actual);
         }
 
-        [TestMethod()]
+        [Test]
         public void CanSetupAndRetrieveLazyConfigValue()
         {
             // Arrange
             var target = this.MakeLocator() as IDependencyConfigurator;
-            var expected = new GenericParameterHelper(10);
+            var expected = new ParameterHelper(10);
 
             // Act
-            target.PutConfiguration<GenericParameterHelper>("key", () => lazyValue);
+            target.PutConfiguration<ParameterHelper>("key", () => lazyValue);
             lazyValue = expected;
-            GenericParameterHelper actual = (target as IDependencyProvider).GetConfiguration<GenericParameterHelper>("key");
+            ParameterHelper actual = (target as IDependencyProvider).GetConfiguration<ParameterHelper>("key");
 
             // Assert
             Assert.IsNotNull(actual);
             Assert.AreEqual(expected, actual);
         }
 
-        [TestMethod()]
+        [Test]
         public void CanSetupAndCreateGenericAbstractType()
         {
             // Arrange
             var target = this.MakeLocator() as IDependencyConfigurator;
-            BaseGeneric<GenericParameterHelper> result;
+            BaseGeneric<ParameterHelper> result;
 
             // Act
             target.SetupDependency(typeof(Generic<>), typeof(BaseGeneric<>), "test");
-            result = (target as IDependencyProvider).CreateNamed<BaseGeneric<GenericParameterHelper>>("test");
+            result = (target as IDependencyProvider).CreateNamed<BaseGeneric<ParameterHelper>>("test");
 
             // Assert
             Assert.IsNotNull(result);
         }
 
-        [TestMethod()]
+        [Test]
         public void CanSetupAndCreateGenericInterfaceType()
         {
             // Arrange
             var target = this.MakeLocator() as IDependencyConfigurator;
-            IGeneric<GenericParameterHelper> result;
+            IGeneric<ParameterHelper> result;
 
             // Act
             target.SetupDependency(typeof(Generic<>), typeof(IGeneric<>), "test");
-            result = (target as IDependencyProvider).CreateNamed<IGeneric<GenericParameterHelper>>("test");
+            result = (target as IDependencyProvider).CreateNamed<IGeneric<ParameterHelper>>("test");
 
             // Assert
             Assert.IsNotNull(result);
         }
 
-        [TestMethod()]
+        [Test]
         public void CanSetupAndCreateGenericInterfaceTypeWithParameter()
         {
             // Arrange
             var target = this.MakeLocator() as IDependencyConfigurator;
-            IGeneric<GenericParameterHelper> result;
-            GenericParameterHelper expected = new GenericParameterHelper(10);
+            IGeneric<ParameterHelper> result;
+            ParameterHelper expected = new ParameterHelper(10);
 
             // Act
             target.SetupDependency(typeof(Generic<>), typeof(IGeneric<>), "test");
-            result = (target as IDependencyProvider).CreateNamed<IGeneric<GenericParameterHelper>>("test", expected);
+            result = (target as IDependencyProvider).CreateNamed<IGeneric<ParameterHelper>>("test", expected);
 
             // Assert
             Assert.IsNotNull(result);
@@ -228,22 +228,22 @@
             Assert.AreEqual(expected, result.Property);
         }
 
-        [TestMethod()]
+        [Test]
         public void ConcreteTypeHasPriorityOverGeneric()
         {
             // Arrange
             var target = this.MakeLocator() as IDependencyConfigurator;
-            IGeneric<GenericParameterHelper> result;
-            GenericParameterHelper expected = new GenericParameterHelper(10);
+            IGeneric<ParameterHelper> result;
+            ParameterHelper expected = new ParameterHelper(10);
 
             // Act
-            target.SetupDependency<Generic<GenericParameterHelper>, IGeneric<GenericParameterHelper>>("default");
+            target.SetupDependency<Generic<ParameterHelper>, IGeneric<ParameterHelper>>("default");
             target.SetupDependency(typeof(CompetingGeneric<>), typeof(IGeneric<>), "default");
-            result = (target as IDependencyProvider).CreateNamed<IGeneric<GenericParameterHelper>>("default", expected);
+            result = (target as IDependencyProvider).CreateNamed<IGeneric<ParameterHelper>>("default", expected);
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.IsInstanceOfType(result, typeof(Generic<GenericParameterHelper>));
+            Assert.IsInstanceOf<Generic<ParameterHelper>>(result);
         }
 
         public virtual object MakeLocator()
@@ -251,6 +251,17 @@
             return new DependencyController();
         }
 
-        private GenericParameterHelper lazyValue = null;
+        private ParameterHelper lazyValue = null;
+    }
+
+    class ParameterHelper
+    {
+      public ParameterHelper()
+      {
+      }
+
+      public ParameterHelper(int number)
+      {
+      }
     }
 }

@@ -3,22 +3,22 @@
 	using System;
 	using DependencyLocation.Containers;
 	using Fasterflect;
-	using Microsoft.VisualStudio.TestTools.UnitTesting;
-	using TestingTools.Core;
-	using TestingTools.Extensions;
+	using NUnit.Framework;
+  using TestingTools.Core;
+  using TestingTools.Extensions;
 
 	/// <summary>
 	///This is a test class for InterfaceConstructorsTest and is intended
 	///to contain all InterfaceConstructorsTest Unit Tests
 	///</summary>
-	[TestClass()]
+	[TestFixture]
 	public class InterfaceConstructorsTest
 	{
 
 		/// <summary>
 		///A test for InterfaceConstructors Constructor
 		///</summary>
-		[TestMethod()]
+		[Test]
 		public void CanCreateAndAssignAnInterfaceType()
 		{
 			// Arrange
@@ -38,7 +38,7 @@
 		/// <summary>
 		///A test for IsType
 		///</summary>
-		[TestMethod()]
+		[Test]
 		public void CanVerifyATypeIsEqualOrUnequal()
 		{
 			// Arrange
@@ -78,7 +78,7 @@
 			Verify.That(actual).IsEqualTo(expected).Now();
 		}
 
-		[TestMethod()]
+		[Test]
 		public void CanVerifyASubTypeIsOfABaseType()
 		{
 			IsTypeTest1Helper<IStubDependency, IStubDependency>(true);
@@ -107,7 +107,7 @@
 		/// <summary>
 		/// Tests if it can get a parameterless consructor (objec[] {}), a constructor with params, and not get a constructor that doesnt match the parameters
 		///</summary>
-		[TestMethod()]
+		[Test]
 		public void CanGetOrNotAnExistingConstructorWithEmptyParamsExistingParamsAndNonExistingParams()
 		{
 			// Arrange
@@ -154,7 +154,7 @@
 		/// <summary>
 		/// Tests that it can get a parameterless constructor using Type.EmptyTypes as the argument
 		///</summary>
-		[TestMethod()]
+		[Test]
 		public void CanGetAConstructorUsingTypeEmptyTypesAsParams()
 		{
 			// Arrange
@@ -179,7 +179,7 @@
 		/// Tests wether it can get the constructor using parameters that derive from the actual parameters of the constructor
 		/// and the actual parameter types of the constructor
 		///</summary>
-		[TestMethod()]
+		[Test]
 		public void CanGetAConstructorUsingInheritingTypeOrExactTypesAsParameters()
 		{
 			// Arrange

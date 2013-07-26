@@ -177,18 +177,18 @@ namespace DependencyLocation
         public TInterface CreateNamed<TInterface>(string key, params object[] args)
         {
             Type[] lArgTypes = args != null && args.Length > 0 ? Type.GetTypeArray(args) : Type.EmptyTypes;
-            Type lInterfaceType = typeof(TInterface);
+            Type interfaceType = typeof(TInterface);
             try
             {
-                if (!this.mConstructors.ContainsKey(key) || !this.mConstructors[key].HasRegistered(lInterfaceType))
+                if (!this.mConstructors.ContainsKey(key) || !this.mConstructors[key].HasRegistered(interfaceType))
                 {
-                    GenericDefinitionContainer lGenericDefinition = this.mGenericDefinitions[key]
-                                                                    .First(cGenericDefinitions => cGenericDefinitions.CanMake(lInterfaceType));
-                    ConstructorContainer lConstructors = this.mConstructors.TryGetOrAdd(key);
-                    lGenericDefinition.AddInterfaceConstructors(lInterfaceType, lConstructors);
+                    GenericDefinitionContainer genericDefinition = this.mGenericDefinitions[key]
+                                                                    .First(cGenericDefinitions => cGenericDefinitions.CanMake(interfaceType));
+                    ConstructorContainer constructors = this.mConstructors.TryGetOrAdd(key);
+                    genericDefinition.AddInterfaceConstructors(interfaceType, constructors);
                 }
 
-                ConstructorInvoker constructor = this.mConstructors[key].GetConstructor(lArgTypes, lInterfaceType);
+                ConstructorInvoker constructor = this.mConstructors[key].GetConstructor(lArgTypes, interfaceType);
                 return args != null && args.Length > 0 ?
                         (TInterface)constructor(args) :
                         (TInterface)constructor();
@@ -199,13 +199,14 @@ namespace DependencyLocation
                 if (ex is KeyNotFoundException ||
                     ex is InvalidOperationException)
                 {
-                    string tipos = lArgTypes == null || lArgTypes.Length == 0 ? "con constructor sin parámetros" : "con constructor de parámetros";
+                    string types = lArgTypes == null || lArgTypes.Length == 0 ? "with a parameterless constructor" : 
+                                                                                "with a constructor with parameters of type:";
                     foreach (Type type in lArgTypes)
                     {
-                        tipos += ", " + type.FullName;
+                        types += ", " + type.FullName;
                     }
 
-                    string mensaje = string.Format("El tipo {0} no está registrado {1}", lInterfaceType.FullName, tipos);
+                    string mensaje = string.Format("The type {0} is not registered for interface {1}", interfaceType.FullName, types);
                     throw new ConfigurationErrorsException(mensaje, ex);
                 }
                 else

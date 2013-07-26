@@ -6,7 +6,7 @@ namespace Test.Locator
     using System.Linq;
     using DependencyLocation.Containers;
     using Fasterflect;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using NUnit.Framework;
     using TestingTools.Core;
     using TestingTools.Extensions;
 
@@ -14,14 +14,14 @@ namespace Test.Locator
     ///This is a test class for ConstructorContainerTest and is intended
     ///to contain all ConstructorContainerTest Unit Tests
     ///</summary>
-    [TestClass()]
+    [TestFixture]
     public class ConstructorContainerTest
     {
 
         /// <summary>
         /// A test for ConstructorContainer Constructor
         ///</summary>
-        [TestMethod()]
+        [Test]
         public void ConstructorContainerConstructorTest()
         {
             // Arrange
@@ -41,7 +41,7 @@ namespace Test.Locator
         /// <summary>
         /// A test for Add
         ///</summary>
-        [TestMethod()]
+        [Test]
         public void AddTest()
         {
             // Arrange
@@ -63,7 +63,7 @@ namespace Test.Locator
         /// <summary>
         ///A test for GetConstructor
         ///</summary>
-        [TestMethod()]
+        [Test]
         public void GetLimitsConstructorTest()
         {
             // Arrange
@@ -113,7 +113,7 @@ namespace Test.Locator
         /// <summary>
         ///A test for HasRegistered
         ///</summary>
-        [TestMethod()]
+        [Test]
         public void HasRegisteredValidTest()
         {
             // Arrange
@@ -132,7 +132,7 @@ namespace Test.Locator
         /// <summary>
         ///A test for HasRegistered
         ///</summary>
-        [TestMethod()]
+        [Test]
         public void HasRegisteredInvalidTest()
         {
             // Arrange
@@ -152,7 +152,7 @@ namespace Test.Locator
         /// <summary>
         ///A test for HasRegistered
         ///</summary>
-        [TestMethod()]
+        [Test]
         public void HasRegisteredInvalidTest1()
         {
             // Arrange
@@ -172,7 +172,7 @@ namespace Test.Locator
         /// <summary>
         ///A test for HasRegistered
         ///</summary>
-        [TestMethod()]
+        [Test]
         public void HasRegisteredInvalidTest2()
         {
             // Arrange
