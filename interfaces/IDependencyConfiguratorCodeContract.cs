@@ -4,7 +4,7 @@ namespace DependencyLocation
     using System.Diagnostics.Contracts;
 
     [ContractClassFor(typeof(IDependencyConfigurator))]
-    internal abstract class IDependencyConfiguratorCodeContract : IDependencyProviderCodeContract, IDependencyConfigurator
+    internal abstract class IDependencyConfiguratorCodeContract : IDependencyConfigurator
     {
         #region IDependencyLocator Members
 
