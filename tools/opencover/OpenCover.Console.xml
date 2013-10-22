@@ -1,0 +1,123 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>OpenCover.MSBuild</name>
+    </assembly>
+    <members>
+        <member name="T:OpenCover.MSBuild.OpenCover">
+            <summary>Executes the OpenCover tool with the specified arguments.</summary>
+            <example>
+            <code><![CDATA[
+            <Target Name="Test">
+              <OpenCover
+                Target="%(NUnitConsole.Identity)"
+                TargetArgs="OpenCover.Test.dll /noshadow"
+                Filter="+[Open*]*;-[OpenCover.T*]*"
+                Output="opencovertests.xml"
+              />
+            </Target>
+            ]]></code>
+            </example>
+        </member>
+        <member name="M:OpenCover.MSBuild.OpenCover.#ctor">
+            <summary>
+            Creates a new instance of the <see cref="T:OpenCover.MSBuild.OpenCover"/> task.
+            </summary>
+        </member>
+        <member name="M:OpenCover.MSBuild.OpenCover.GenerateFullPathToTool">
+            <summary>
+            Returns the  path to the OpenCover tool.
+            </summary>
+            <returns>The full path to the OpenCover tool.</returns>
+        </member>
+        <member name="M:OpenCover.MSBuild.OpenCover.GenerateCommandLineCommands">
+            <summary>
+            Generates the command line arguments for the OpenCover tool.
+            </summary>
+            <returns>The command line arguments for the OpenCover tool.</returns>
+        </member>
+        <member name="M:OpenCover.MSBuild.OpenCover.GetWorkingDirectory">
+            <summary>
+            Gets the working directory for the OpenCover tool.
+            </summary>
+            <returns>The working directory for the OpenCover tool.</returns>
+        </member>
+        <member name="M:OpenCover.MSBuild.OpenCover.LogEventsFromTextOutput(System.String,Microsoft.Build.Framework.MessageImportance)">
+            <summary>
+            Logs the OpenCover output.
+            </summary>
+            <param name="singleLine">A single line output by the OpenCover tool.</param>
+            <param name="messageImportance">The importance of the message.</param>
+        </member>
+        <member name="P:OpenCover.MSBuild.OpenCover.DefaultFilters">
+            <summary>
+            Indicates whether default filters should be applied or not.
+            </summary>
+        </member>
+        <member name="P:OpenCover.MSBuild.OpenCover.CoverByTest">
+            <summary>
+            Gather coverage by test.
+            </summary>
+        </member>
+        <member name="P:OpenCover.MSBuild.OpenCover.ExcludeByAttribute">
+            <summary>
+            Exclude a class or method by filters that match attributes.
+            </summary>
+        </member>
+        <member name="P:OpenCover.MSBuild.OpenCover.ExcludeByFile">
+            <summary>
+            Exclude a class or method by filters that match filenames.
+            </summary>
+        </member>
+        <member name="P:OpenCover.MSBuild.OpenCover.Filter">
+            <summary>
+            A list of filters to apply.
+            </summary>
+        </member>
+        <member name="P:OpenCover.MSBuild.OpenCover.MergeByHash">
+            <summary>
+            Merge the result by assembly file-hash.
+            </summary>
+        </member>
+        <member name="P:OpenCover.MSBuild.OpenCover.Output">
+            <summary>
+            The location and name of the output XML file.
+            </summary>
+        </member>
+        <member name="P:OpenCover.MSBuild.OpenCover.Register">
+            <summary>
+            Indicates whether the code coverage profiler should be registered or not.
+            </summary>
+        </member>
+        <member name="P:OpenCover.MSBuild.OpenCover.ShowUnvisited">
+            <summary>
+            Indicates whether the list of unvisited methods and classes should be shown.
+            </summary>
+        </member>
+        <member name="P:OpenCover.MSBuild.OpenCover.Service">
+            <summary>
+            Indicates whether target is a service rather than a regular executable.
+            </summary>
+        </member>
+        <member name="P:OpenCover.MSBuild.OpenCover.Target">
+            <summary>
+            The target application.
+            </summary>
+        </member>
+        <member name="P:OpenCover.MSBuild.OpenCover.TargetWorkingDir">
+            <summary>
+            The working directory for the target process.
+            </summary>
+        </member>
+        <member name="P:OpenCover.MSBuild.OpenCover.TargetArgs">
+            <summary>
+            Arguments to be passed to the target process.
+            </summary>
+        </member>
+        <member name="P:OpenCover.MSBuild.OpenCover.ToolName">
+            <summary>
+            Gets the name of the OpenCover tool executable.
+            </summary>
+        </member>
+    </members>
+</doc>

@@ -293,9 +293,9 @@
 
       // Act
       Action action = () =>
-          {
-            actual = target.SetConcrete(concrete);
-          };
+      {
+        actual = target.SetConcrete(concrete);
+      };
 
       // Assert
       Verify.That(action)

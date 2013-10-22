@@ -16,3 +16,6 @@ output/
 *.gpState
 *.testsettings
 *.*~*
+coverage-report/
+*TestReport.xml
+*.Coverage.xml
