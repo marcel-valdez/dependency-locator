@@ -1,0 +1,7 @@
+﻿@Using(impl.test.dll);
+@Using(interfaces.test.dll);
+
+using Interfaces.Test;
+using Impl.Test;
+
+Config.SetupDependency<Service, IService>();

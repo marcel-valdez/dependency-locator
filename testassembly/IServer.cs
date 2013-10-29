@@ -1,6 +1,5 @@
 namespace TestAssembly
 {
-    using System.Xml;
 
     public interface IServer
     {
@@ -33,8 +32,6 @@ namespace TestAssembly
         ISmtpSettings SMTPAjustes { get; set; }
 
         string CentralConfigName { get; set; }
-
-        XmlDocument SerializeToXml();
 
         IXmlDeserializer<IServer> GetXmlDeserializer();
     }

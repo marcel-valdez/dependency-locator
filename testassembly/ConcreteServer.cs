@@ -1,9 +1,8 @@
 namespace TestAssembly
 {
     using System;
-    using System.Xml;
 
-    public class ConcreteServer : IServer
+  public class ConcreteServer : IServer
     {
         public ConcreteServer()
         {
@@ -103,11 +102,6 @@ namespace TestAssembly
         {
             get;
             set;
-        }
-
-        public XmlDocument SerializeToXml()
-        {
-            throw new NotImplementedException();
         }
 
         public IXmlDeserializer<IServer> GetXmlDeserializer()

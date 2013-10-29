@@ -153,6 +153,10 @@
     <Compile Include="TypeArrayComparerTest.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\interfaces\interfaces.csproj">
+      <Project>{74ee8818-c42f-4864-9701-8b750a4de802}</Project>
+      <Name>interfaces</Name>
+    </ProjectReference>
     <ProjectReference Include="..\locator\locator.csproj">
       <Project>{289189ED-19E8-4ED0-B1DA-AADF3663B509}</Project>
       <Name>locator</Name>

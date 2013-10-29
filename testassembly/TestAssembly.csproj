@@ -63,8 +63,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConcreteServer.cs" />
@@ -73,6 +71,12 @@
     <Compile Include="ISMTPSettings.cs" />
     <Compile Include="IXmlDeserializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\interfaces\interfaces.csproj">
+      <Project>{74ee8818-c42f-4864-9701-8b750a4de802}</Project>
+      <Name>interfaces</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
