@@ -153,10 +153,6 @@
     <Compile Include="TypeArrayComparerTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\interfaces\interfaces.csproj">
-      <Project>{74EE8818-C42F-4864-9701-8B750A4DE802}</Project>
-      <Name>interfaces</Name>
-    </ProjectReference>
     <ProjectReference Include="..\locator\locator.csproj">
       <Project>{289189ED-19E8-4ED0-B1DA-AADF3663B509}</Project>
       <Name>locator</Name>
@@ -177,7 +173,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
-
   <Target Name="Test" Condition=" '$(Configuration)' == 'Release' ">
     <Delete Files="UnitTestReport.xml" ContinueOnError="true" />
     <Exec Command="$(OutDir)$(AssemblyName).exe /xml=UnitTestReport.xml /domain=None" ContinueOnError="false" />
@@ -186,7 +181,6 @@
     </XmlPeek>
     <Error Condition="'@(Failures)' != ''" Text="Unit tests failed: %(Failures.Identity)" />
   </Target>
-
   <Target Name="Coverage" DependsOnTargets="Build" Condition="'$(Coverage)' != ''">
     <Delete Files="..\$(AssemblyName).Coverage.xml" ContinueOnError="true">
     </Delete>

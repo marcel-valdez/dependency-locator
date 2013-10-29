@@ -69,7 +69,7 @@ namespace DependencyLocation.Setup
         /// <param name="name">The name.</param>
         /// <param name="path">The path.</param>
         /// <returns>The loaded Assembly</returns>
-        private static Assembly LoadAssembly(string name, string path)
+        internal static Assembly LoadAssembly(string name, string path)
         {
             Contract.Requires(!String.IsNullOrEmpty(name) || !String.IsNullOrEmpty(path), "both path and name are null or empty.");
 

@@ -19,7 +19,7 @@ namespace DependencyLocation
         /// <typeparam name="TInterface">The type of the interface.</typeparam>
         /// <param name="args">The arguments.</param>
         /// <returns>
-        /// Una instancia del tipo <typeparamref name="TInterface"/>
+        /// An instance of type <typeparamref name="TInterface"/>
         /// </returns>
         TInterface Create<TInterface>(params object[] args);
 
@@ -30,7 +30,7 @@ namespace DependencyLocation
         /// <param name="key">The key.</param>
         /// <param name="args">The arguments.</param>
         /// <returns>
-        /// Una instancia del tipo <typeparamref name="TInterface"/>
+        /// An instance of type <typeparamref name="TInterface"/>
         /// </returns>
         TInterface CreateNamed<TInterface>(string key, params object[] args);
 
@@ -40,7 +40,7 @@ namespace DependencyLocation
         /// its requeste.
         /// </summary>
         /// <typeparam name="TInterface">The type of the interface.</typeparam>
-        /// <returns>Una instance del tipo <typeparamref name="TInterface"/></returns>
+        /// <returns>An instance of type  <typeparamref name="TInterface"/></returns>
         TInterface GetSingleton<TInterface>(string key = null)
                 where TInterface : class;
     }

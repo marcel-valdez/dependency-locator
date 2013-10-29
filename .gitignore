@@ -7,6 +7,14 @@
 /test.locator/obj
 /testassembly/bin
 /testassembly/obj
+/interfaces.test/bin
+/interfaces.test/obj
+/impl.test/bin
+/impl.test/obj
+/dependconfigurator/bin
+/dependconfigurator/obj
+/dependencyconfigurator.test/bin
+/dependencyconfigurator.test/obj
 /locator/TestResults
 *.suo
 TestResults

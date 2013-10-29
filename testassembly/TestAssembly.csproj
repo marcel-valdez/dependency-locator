@@ -74,12 +74,6 @@
     <Compile Include="IXmlDeserializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\interfaces\interfaces.csproj">
-      <Project>{74EE8818-C42F-4864-9701-8B750A4DE802}</Project>
-      <Name>interfaces</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -4,12 +4,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("CommonUtilities")]
+[assembly: AssemblyTitle("DependencyLocator")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Microsoft")]
-[assembly: AssemblyProduct("CommonUtilities")]
-[assembly: AssemblyCopyright("Copyright © Microsoft 2011")]
+[assembly: AssemblyProduct("DependencyLocator")]
+[assembly: AssemblyCopyright("Copyright © Marcel Valdez 2011")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -35,3 +35,4 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyFileVersion("1.0.0.0")]
 
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Test.Locator")]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("DependencyLocation.Script")]

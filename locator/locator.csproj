@@ -125,18 +125,17 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\interfaces\interfaces.csproj">
-      <Project>{74EE8818-C42F-4864-9701-8B750A4DE802}</Project>
-      <Name>interfaces</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\interfaces\interfaces.csproj">
+      <Project>{74ee8818-c42f-4864-9701-8b750a4de802}</Project>
+      <Name>interfaces</Name>
+    </ProjectReference>
+  </ItemGroup>
   <ItemGroup>
     <Content Include="doc\ConstructorsSetup_HLD.txt" />
     <Content Include="doc\ConstructorsSetup_Reqs.txt" />
