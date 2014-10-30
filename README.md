@@ -169,61 +169,33 @@ Now, the controller has to provide the View with the <b>interface</b> of the Vie
 
 In order for Dave to setup this dependency, all he has to do are 2 things:
 
-<b>First</b>. In the Bank.ViewModels project he has to add a new class for setting up the dependencies it provides as such:
+**First**. He has to tell the Dependency Locator it has how to connect an interface with an implementation. This is easily done by creating a config.dependfile.
 
-````csharp
-namespace Bank.ViewModels {
-	using DependencyLocation;
-	using DependencyLocation.Setup;
-	using Bank.ViewModels.Intefaces;
-	public class Setup : IDependencySetup {
-		public void SetupDependencies(IDependencyConfigurator container, string prefix, string defaultKey) {
-			container.SetupDependency<IAccountDetailsViewModel, AccountDetailsViewModel>(defaultKey);
-		}
-	}
-}
+Contents of config.dependfile:
+
+````
+@Using(path/to/Bank.ViewModels.dll)
+@Using(path/to/Bank.ViewModels.Interfaces.dll)
+
+using Bank.ViewModels;
+using Bank.ViewModels.Intefaces;
+
+Config.SetupDependency<IAccountDetailsViewModel, AccountDetailsViewModel>();
 ````
 
-<b>Second</b>. He has to tell the Dependency Locator it has to load that Setup class in the Bank.ViewModels project. This is done by creating a dependency.config file and calling the Dependency Loader during startup in the Global.asax file.
+The **.dependfile** could be in charge of setting up N interface libraries with M implementation libraries. In such a case it would just have references to all the interface and implementation libraries it sets up.
 
-Contents of dependency.config:
-````xml
-<?xml version="1.0" encoding="utf-8" ?>
-<configuration>
-  <configSections>
-    <sectionGroup name="dependencyInjector">
-      <section
-        name="dependencyConfiguration"
-        type="DependencyLocation.Configuration.DependencyConfiguration, DependencyLocator, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
-        allowLocation="true"
-        allowDefinition="Everywhere"
-      />
-    </sectionGroup>
-  </configSections>
+**Second**. Change the Global.asax.cs contents, the ScriptLoader will load the script and setup the dependencies:
 
-  <dependencyInjector>
-    <dependencyConfiguration defaultKey="default">
-      <dependencies>
-        <add assemblyName="Bank.ViewModels, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" namedInstancePrefix="" />
-      </dependencies>
-    </dependencyConfiguration>
-  </dependencyInjector>
-</configuration>
-````
-The assembly where the dependencies are setup doesn't necessarily have to be the same where the concrete implementations are provided. The assembly that sets up dependencies could be separate from interfaces and implementations. 
-
-The setup Assembly could be in charge of setting up N interface libraries with M implementation libraries. In such a case the setup assembly would just have references to all the interface and implementation libraries it sets up.
-
-Global.asax.cs contents, the DependencyLoader will load any and all IDependencySetup implementors configured in the dependency.config file:
 ````csharp
 namespace Bank {
-    public class BankMvcApplication : System.Web.HttpApplication {
-        protected void Application_Start() {
-				DependencyLoader.Loader.LoadDependencies("dependency.config");
-				/* Rest of the Application_Start code */
-        }
-		/* Rest of the Global.asax.cs file */
+  public class BankMvcApplication : System.Web.HttpApplication {
+    protected void Application_Start() {
+      ScriptLoader.Load("path/to/config.dependfile");
+      /* Rest of the Application_Start code */
     }
+    /* Rest of the Global.asax.cs file */
+  }
 }
 ````
 
@@ -232,8 +204,8 @@ Finally, Dave modifies the Controller code to return a ViewModel instead of a Mo
 namespace Bank.Controllers
 {    
     using Bank.ViewModels.Interfaces;
-	using Bank.Models;
-	using DependencyLocation;
+    using Bank.Models;
+    using DependencyLocation;
     public class AccountController : Controller {
         private readonly DataContext db = new DataContext();
 
